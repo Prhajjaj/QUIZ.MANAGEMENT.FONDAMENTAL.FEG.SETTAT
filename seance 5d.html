@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Comparateur de Taille - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --gold: #ffc107;
+            --white: #ffffff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { width: 100%; max-width: 800px; background: var(--purp-dark); color: white; padding: 20px; border-radius: 12px; text-align: center; border-bottom: 5px solid var(--gold); margin-bottom: 20px; }
+        
+        .quiz-card { 
+            background: white; width: 100%; max-width: 700px; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--purp-light); text-align: center;
+        }
+
+        .scenario-box { background: #f9f6ff; padding: 20px; border-radius: 10px; margin-bottom: 25px; border-left: 5px solid var(--gold); }
+        .scenario-box h2 { color: var(--purp-dark); margin: 0 0 10px 0; font-size: 20px; }
+        .employee-count { font-size: 32px; font-weight: bold; color: var(--purp-med); margin: 10px 0; }
+
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        .btn-size { 
+            padding: 15px; border: 2px solid var(--purp-med); background: white; 
+            color: var(--purp-med); border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-size:hover { background: var(--purp-light); }
+        .btn-size.correct { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .btn-size.wrong { background: #c62828; color: white; border-color: #c62828; }
+
+        #feedback { margin-top: 20px; font-weight: bold; font-size: 18px; min-height: 25px; }
+        #nextBtn { 
+            margin-top: 20px; padding: 12px 30px; background: var(--purp-dark); color: white; 
+            border: none; border-radius: 5px; cursor: pointer; display: none; font-weight: bold;
+        }
+
+        .footer { margin-top: 30px; font-weight: bold; color: var(--purp-dark); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Critère Dimensionnel : L'Effectif</h1>
+        <p>Classez l'entreprise selon les normes internationales (OCDE)</p>
+    </div>
+
+    <div class="quiz-card">
+        <div class="scenario-box">
+            <h2 id="countryTitle">Au JAPON 🇯🇵</h2>
+            <p>Une entreprise emploie :</p>
+            <div class="employee-count" id="countDisplay">45 salariés</div>
+        </div>
+
+        <div class="btn-grid">
+            <button class="btn-size" onclick="check('Petite')">PETITE</button>
+            <button class="btn-size" onclick="check('Moyenne')">MOYENNE</button>
+            <button class="btn-size" onclick="check('Grande')">GRANDE</button>
+        </div>
+
+        <div id="feedback"></div>
+        <button id="nextBtn" onclick="nextQuestion()">Question Suivante</button>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Hassan First University</div>
+
+    <script>
+        const data = [
+            { country: "Au JAPON 🇯🇵", n: 45, size: "Petite", note: "Au Japon, < 50 = Petite" },
+            { country: "En BELGIQUE 🇧🇪", n: 55, size: "Moyenne", note: "En Belgique, 51 à 200 = Moyenne" },
+            { country: "Aux USA 🇺🇸", n: 200, size: "Petite", note: "Aux USA, < 250 = Petite" },
+            { country: "En SUISSE 🇨🇭", n: 110, size: "Grande", note: "En Suisse, > 101 = Grande" },
+            { country: "En FRANCE 🇫🇷", n: 8, size: "Petite", note: "En France, 0-9 = Très Petite / Petite" },
+            { country: "Au DANEMARK 🇩🇰", n: 250, size: "Grande", note: "Au Danemark, > 201 = Grande" }
+        ];
+
+        let idx = 0;
+
+        function nextQuestion() {
+            if(idx >= data.length) {
+                document.querySelector('.quiz-card').innerHTML = "<h2>Excellent !</h2><p>Vous avez compris que la taille dépend du contexte géographique.</p><button class='btn-size' onclick='location.reload()'>Recommencer</button>";
+                return;
+            }
+            const q = data[idx];
+            document.getElementById('countryTitle').innerText = q.country;
+            document.getElementById('countDisplay').innerText = q.n + " salariés";
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('nextBtn').style.display = "none";
+            document.querySelectorAll('.btn-size').forEach(b => b.className = 'btn-size');
+        }
+
+        function check(choice) {
+            const correct = data[idx].size;
+            const btns = document.querySelectorAll('.btn-size');
+            
+            btns.forEach(b => {
+                if(b.innerText === correct.toUpperCase()) b.classList.add('correct');
+                if(b.innerText === choice.toUpperCase() && choice !== correct) b.classList.add('wrong');
+            });
+
+            const f = document.getElementById('feedback');
+            if(choice === correct) {
+                f.innerText = "✅ Bravo ! " + data[idx].note;
+                f.style.color = "#2e7d32";
+            } else {
+                f.innerText = "❌ Faux. " + data[idx].note;
+                f.style.color = "#c62828";
+            }
+            
+            idx++;
+            document.getElementById('nextBtn').style.display = "inline-block";
+        }
+
+        nextQuestion();
+    </script>
+</body>
+</html>

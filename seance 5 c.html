@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Analyste Dimensionnel - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --gold: #ffc107;
+            --white: #ffffff;
+            --success: #2e7d32;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        
+        .header { width: 100%; max-width: 800px; background: var(--purp-dark); color: white; padding: 20px; border-radius: 12px; text-align: center; border-bottom: 5px solid var(--gold); margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 24px; }
+
+        .challenge-container { 
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; width: 100%; max-width: 850px; 
+            background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .case-study { border-right: 2px solid var(--purp-light); padding-right: 20px; }
+        .case-study h2 { color: var(--purp-med); font-size: 18px; border-bottom: 2px solid var(--gold); display: inline-block; }
+        .data-box { background: var(--purp-light); padding: 15px; border-radius: 8px; margin: 15px 0; line-height: 1.6; font-weight: 500; }
+
+        .input-area { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; }
+        input { width: 80%; padding: 12px; border: 2px solid var(--purp-med); border-radius: 8px; font-size: 20px; text-align: center; outline: none; }
+        
+        button.validate { 
+            background: var(--purp-med); color: white; border: none; padding: 12px 25px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 80%;
+        }
+        button.validate:hover { background: var(--purp-dark); }
+
+        .score-board { margin-top: 20px; font-weight: bold; color: var(--purp-dark); }
+        .feedback { font-weight: bold; margin-top: 10px; height: 20px; }
+
+        .formula-hint { font-size: 12px; color: #666; font-style: italic; margin-top: 10px; }
+        
+        .footer { margin-top: 30px; font-weight: bold; color: var(--purp-dark); font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Challenge : Critères Dimensionnels</h1>
+        <p>Calculez les indicateurs de performance</p>
+    </div>
+
+    <div class="challenge-container">
+        <div class="case-study">
+            <h2 id="title">Entreprise Alpha</h2>
+            <div class="data-box" id="problem">
+                </div>
+            <div class="formula-hint" id="hint">Indice : CA = Quantités × Prix</div>
+        </div>
+
+        <div class="input-area">
+            <label id="labelInput">Entrez le CA (Dhs) :</label>
+            <input type="number" id="userValue" placeholder="0000">
+            <button class="validate" onclick="checkAnswer()">VÉRIFIER</button>
+            <div class="feedback" id="feedback"></div>
+        </div>
+    </div>
+
+    <div class="score-board">Progression : <span id="progress">0</span> / 5</div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
+
+    <script>
+        const missions = [
+            { 
+                t: "PME Textile", 
+                p: "A vendu 5 000 t-shirts à 120 Dhs l'unité.", 
+                l: "Calculez le Chiffre d'Affaires (CA) :",
+                a: 600000,
+                h: "CA = Quantités × Prix"
+            },
+            { 
+                t: "Constructeur BTP", 
+                p: "Production totale : 5 000 000 Dhs.<br>Consommation intermédiaire (C.I) : 3 200 000 Dhs.", 
+                l: "Calculez la Valeur Ajoutée (VA) :",
+                a: 1800000,
+                h: "VA = Production - Consommation Intermédiaire"
+            },
+            { 
+                t: "Start-up IT", 
+                p: "CA 2024 : 3 000 000 Dhs.<br>CA 2023 : 2 000 000 Dhs.", 
+                l: "Calculez le taux de variation (%) :",
+                a: 50,
+                h: "Taux = ((CA n - CA n-1) / CA n-1) × 100"
+            },
+            { 
+                t: "Coopérative Agricole", 
+                p: "Prix de vente : 40 Dhs/kg.<br>Quantité : 10 000 kg.", 
+                l: "Quel est le CA total ?",
+                a: 400000,
+                h: "CA = Q × P"
+            },
+            { 
+                t: "Unité Industrielle", 
+                p: "VA créée : 900 000 Dhs.<br>C.I : 400 000 Dhs.", 
+                l: "Quelle était la production totale ?",
+                a: 1300000,
+                h: "Production = VA + C.I"
+            }
+        ];
+
+        let current = 0;
+        let score = 0;
+
+        function load() {
+            if(current >= missions.length) {
+                document.querySelector('.challenge-container').innerHTML = `<div style="grid-column: span 2; text-align:center; padding:40px;">
+                    <h2 style="color:var(--success)">🏆 Mission Accomplie !</h2>
+                    <p>Vous maîtrisez les calculs dimensionnels de l'entreprise.</p>
+                    <button onclick="location.reload()" class="validate">Recommencer</button>
+                </div>`;
+                return;
+            }
+            const m = missions[current];
+            document.getElementById('title').innerText = m.t;
+            document.getElementById('problem').innerHTML = m.p;
+            document.getElementById('labelInput').innerText = m.l;
+            document.getElementById('hint').innerText = "Indice : " + m.h;
+            document.getElementById('userValue').value = "";
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function checkAnswer() {
+            const val = parseFloat(document.getElementById('userValue').value);
+            const feedback = document.getElementById('feedback');
+            
+            if(val === missions[current].a) {
+                feedback.innerText = "✅ Correct !";
+                feedback.style.color = "var(--success)";
+                score++;
+                current++;
+                document.getElementById('progress').innerText = score;
+                setTimeout(load, 1500);
+            } else {
+                feedback.innerText = "❌ Faux, réessayez.";
+                feedback.style.color = "red";
+            }
+        }
+
+        load();
+    </script>
+</body>
+</html>

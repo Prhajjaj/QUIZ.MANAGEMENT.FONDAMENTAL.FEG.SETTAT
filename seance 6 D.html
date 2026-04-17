@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Lier les Concepts - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root {
+            --primary: #4a148c;
+            --secondary: #7b1fa2;
+            --accent: #ffc107;
+            --bg: #fdfdfd;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        
+        .header-mini { 
+            width: 95%; max-width: 900px; background: var(--primary); color: white; 
+            padding: 8px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--accent); margin-bottom: 20px;
+        }
+        .header-mini h1 { margin: 0; font-size: 18px; }
+
+        .matching-wrapper {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 150px;
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .column { display: flex; flex-direction: column; gap: 20px; z-index: 2; }
+
+        .item {
+            background: white; border: 2px solid #ddd; padding: 12px; border-radius: 8px;
+            cursor: pointer; font-size: 18px; text-align: center; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; min-height: 50px;
+        }
+
+        .item:hover { border-color: var(--secondary); background: #f3e5f5; }
+        .item.selected { border-color: var(--accent); background: #fffde7; box-shadow: 0 0 10px rgba(255,193,7,0.5); }
+        .item.matched { background: #e8f5e9; border-color: #2e7d32; cursor: default; }
+
+        .footer { margin-top: 40px; font-weight: bold; color: var(--primary); font-size: 12px; }
+        #btn-reset { margin-top: 20px; padding: 8px 20px; cursor: pointer; border-radius: 5px; border: none; background: #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="header-mini">
+        <h1>Reliez les définitions aux formes de décentralisation</h1>
+        <p>Cliquez sur une définition puis sur son terme correspondant</p>
+    </div>
+
+    <div class="matching-wrapper" id="game-container">
+        <canvas id="canvas"></canvas>
+        
+        <div class="column" id="col-left">
+            <div class="item" data-id="1">Dispersion du pouvoir formel vers le bas de la ligne hiérarchique</div>
+            <div class="item" data-id="2">Le pouvoir est transféré à des experts hors ligne hiérarchique</div>
+            <div class="item" data-id="3">Certaines décisions sont centralisées, d'autres déléguées</div>
+            <div class="item" data-id="4">Un niveau hiérarchique s'occupe de l'ensemble des décisions (rare)</div>
+        </div>
+
+        <div class="column" id="col-right">
+            <div class="item" data-match="2">Décentralisation Horizontale</div>
+            <div class="item" data-match="4">Décentralisation Globale</div>
+            <div class="item" data-match="1">Décentralisation Verticale</div>
+            <div class="item" data-match="3">Décentralisation Sélective</div>
+        </div>
+    </div>
+
+    <button id="btn-reset" onclick="location.reload()">Réinitialiser</button>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let selected = null;
+        let matches = [];
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawLines();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        document.querySelectorAll('.item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (item.classList.contains('matched')) return;
+
+                if (!selected) {
+                    selected = item;
+                    item.classList.add('selected');
+                } else {
+                    if (selected.parentElement !== item.parentElement) {
+                        // Check match
+                        const leftId = selected.dataset.id || item.dataset.id;
+                        const rightMatch = selected.dataset.match || item.dataset.match;
+
+                        if (leftId === rightMatch) {
+                            matches.push({from: selected, to: item});
+                            selected.classList.remove('selected');
+                            selected.classList.add('matched');
+                            item.classList.add('matched');
+                            selected = null;
+                            drawLines();
+                        } else {
+                            selected.classList.remove('selected');
+                            selected = null;
+                            alert("Mauvaise correspondance ! Relisez votre cours.");
+                        }
+                    } else {
+                        selected.classList.remove('selected');
+                        selected = item;
+                        item.classList.add('selected');
+                    }
+                }
+            });
+        });
+
+        function drawLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#2e7d32';
+            ctx.lineWidth = 3;
+
+            matches.forEach(m => {
+                const fromRect = m.from.getBoundingClientRect();
+                const toRect = m.to.getBoundingClientRect();
+                const containerRect = document.getElementById('game-container').getBoundingClientRect();
+
+                const x1 = (m.from.parentElement.id === 'col-left') ? fromRect.right - containerRect.left : fromRect.left - containerRect.left;
+                const y1 = fromRect.top + fromRect.height/2 - containerRect.top;
+                
+                const x2 = (m.to.parentElement.id === 'col-left') ? toRect.right - containerRect.left : toRect.left - containerRect.left;
+                const y2 = toRect.top + toRect.height/2 - containerRect.top;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Management : Terminologie & Structures</title>
+    <style>
+        :root { --purp: #6c5ce7; --bg: #f0f3f7; --white: #ffffff; --text: #2d3436; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        
+        /* En-tête (Inchangé) */
+        .course-header { text-align: center; margin-bottom: 20px; }
+        .course-header h2 { color: var(--purp); margin: 0; font-size: 20px; text-transform: uppercase; }
+        .course-header p { color: var(--text); margin: 5px 0; font-weight: 500; }
+
+        /* --- ZONE AGRANDIE --- */
+        .card { 
+            background: var(--white); 
+            width: 100%; 
+            max-width: 700px; /* Augmenté de 550px à 800px */
+            border-radius: 25px; 
+            padding: 40px; /* Plus d'espace interne */
+            position: relative; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08); 
+        }
+
+        .emoji-box { font-size: 70px; text-align: center; margin-bottom: 15px; } /* Plus grand */
+        
+        h1 { color: var(--purp); text-align: center; font-size: 28px; margin-bottom: 25px; } /* Plus grand */
+
+        .question-text { 
+            font-size: 24px; /* Augmenté de 18px à 24px */
+            font-weight: 600; 
+            color: var(--text); 
+            margin-bottom: 30px; 
+            text-align: center; 
+            line-height: 1.5; 
+        }
+
+        .options { display: grid; gap: 15px; }
+
+        .btn-opt { 
+            padding: 20px; /* Plus de confort au clic */
+            border: 2px solid #edeff2; 
+            border-radius: 15px; 
+            background: white; 
+            cursor: pointer; 
+            font-size: 18px; /* Augmenté de 16px à 18px */
+            transition: 0.2s; 
+            text-align: left; 
+            line-height: 1.4;
+        }
+        /* --------------------- */
+
+        .prog-container { width: 100%; height: 8px; background: #dfe6e9; position: absolute; top: 0; left: 0; border-radius: 20px 20px 0 0; }
+        .prog-bar { height: 100%; background: var(--purp); width: 0%; transition: 0.3s; border-radius: 20px 0 0 0; }
+        
+        .btn-opt:hover { border-color: var(--purp); background: #f9f8ff; }
+        .correct { background: #55efc4 !important; border-color: #00b894 !important; color: #003d31; font-weight: bold; }
+        .wrong { background: #ff7675 !important; border-color: #d63031 !important; color: #4d0000; }
+        
+        #feedback { 
+            margin-top: 20px; 
+            padding: 20px; 
+            border-radius: 12px; 
+            display: none; 
+            font-size: 16px; /* Texte de feedback plus grand */
+            line-height: 1.6; 
+            border: 1px dashed var(--purp); 
+            background: #fdfdff;
+        }
+
+        #next-btn { 
+            display: none; 
+            width: 100%; 
+            padding: 20px; 
+            margin-top: 20px; 
+            border: none; 
+            border-radius: 15px; 
+            background: var(--text); 
+            color: white; 
+            font-weight: bold; 
+            font-size: 18px; 
+            cursor: pointer; 
+        }
+
+        /* Pied de page (Inchangé) */
+        .footer-prof { margin-top: 20px; font-weight: bold; color: var(--purp); font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="course-header">
+    <h2>Management Fondamental</h2>
+    <br>
+</div>
+
+<div class="card">
+    <div class="prog-container"><div class="prog-bar" id="bar"></div></div>
+    <div class="emoji-box" id="emoji">❓</div>
+    <h1 id="title">Quiz Terminologie</h1>
+    <div class="question-text" id="q-text">Chargement...</div>
+    <div class="options" id="opts"></div>
+    <div id="feedback"></div>
+    <button id="next-btn" onclick="next()">Suivant ➔</button>
+</div>
+
+<div class="footer-prof"><br>Professeur HAJJAJ</div>
+
+<script>
+    const db = [
+        { q: "Une Pharmacie de quartier est-elle une institution publique ?", e: "🏥", o: ["Oui, c'est une institution", "Non, c'est une entreprise privée"], a: 1, x: "Même si elle vend des médicaments, c'est une société commerciale qui appartient à un pharmacien privé." },
+        { q: "L'ONCF appartient à l'État mais vend des billets. Dans quel bloc est-il ?", e: "🚆", o: ["Les Entreprises (publiques)", "L'État (administration)", "La société civile"], a: 0, x: "Il produit un service marchand, il est donc classée dans 'Entreprises' avec un but lucratif." },
+        { q: "Lequel est une 'Organisation de la société civile' ?", e: "🤝", o: ["La Commune de Settat", "Marjane", "Le Croissant Rouge Marocain"], a: 2, x: "C'est une organisation privée qui ne cherche pas le profit mais l'intérêt général." },
+        { q: "Pourquoi dit-on 'Organisation' plutôt que 'Société' ?", e: "📖", o: ["C'est plus joli", "C'est plus court", "C'est plus inclusif"], a: 2, x: "Le mot 'Organisation' permet de regrouper les entreprises, les administrations et les associations." },
+        { q: "Une banque comme La Banque Populaire est une...", e: "🏦", o: ["Entreprise privée", "Organisation publique", "Société civile"], a: 0, x: "C'est une entreprise dont le but est de faire du profit pour ses actionnaires." },
+        { q: "Le but de l'intérêt général est le propre de...", e: "🌍", o: ["L'État & Société Civile", "Les entreprises privées", "Seulement l'État"], a: 0, x: "L'État et les associations (société civile) visent le bien commun, contrairement aux entreprises qui visent le profit." },
+        { q: "Selon le cours, quelle est la formule simplifiée de 'Organiser' ?", e: "⚙️", o: ["Diviser + Coordonner", "Vendre + Profiter", "Recruter + Former"], a: 0, x: "L'organisation consiste à diviser le travail en tâches élémentaires puis à les coordonner vers un but commun." },
+        { q: "Dans une organisation, qu'est-ce qui crée de la 'Complexité' ?", e: "🧩", o: ["Le manque d'argent", "Le nombre et la diversité des tâches", "La météo"], a: 1,  x: "Plus il y a d'acteurs et de tâches différentes, plus la situation est complexe et nécessite une structure." },
+        { q: "Diviser le travail global en tâches élémentaires sert à...", e: "✂️", o: ["Perdre du temps", "Spécifier les tâches et les moyens", "Diminuer les salaires"], a: 1, x: "La division permet de clarifier qui fait quoi et avec quels outils ou ressources." },
+        { q: "L'entreprise est une unité de production qui transforme...", e: "🍞", o: ["Des prix en bénéfices", "Des inputs en outputs", "Des clients en salariés"], a: 1, x: "Elle transforme des intrants (matières, machines) en extrants (biens ou services)." }
+    ];
+
+    let idx = 0, score = 0;
+
+    function load() {
+        if(idx >= db.length) return end();
+        const q = db[idx];
+        document.getElementById('bar').style.width = (idx/db.length*100)+'%';
+        document.getElementById('emoji').innerText = q.e;
+        document.getElementById('q-text').innerText = q.q;
+        const oBox = document.getElementById('opts');
+        oBox.innerHTML = '';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        q.o.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-opt';
+            b.innerText = opt;
+            b.onclick = () => check(i);
+            oBox.appendChild(b);
+        });
+    }
+
+    function check(i) {
+        const q = db[idx];
+        const btns = document.querySelectorAll('.btn-opt');
+        btns.forEach(b => b.disabled = true);
+        if(i === q.a) { score++; btns[i].classList.add('correct'); }
+        else { btns[i].classList.add('wrong'); btns[q.a].classList.add('correct'); }
+        const f = document.getElementById('feedback');
+        f.innerHTML = `<strong>Note :</strong> ${q.x}`;
+        f.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function next() { idx++; load(); }
+
+    function end() {
+        document.querySelector('.card').innerHTML = `<h1>Terminé ! 🏆</h1><p style="text-align:center; font-size:28px; font-weight:bold;">Score : ${score}/${db.length}</p><p style="text-align:center; font-size:18px;">Révision terminée pour le cours du Professeur HAJJAJ</p><button onclick="location.reload()" class="btn-opt" style="width:100%; text-align:center; margin-top:20px;">Recommencer</button>`;
+    }
+
+    load();
+</script>
+</body>
+</html>

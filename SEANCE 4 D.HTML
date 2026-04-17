@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Analyse de Porter - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --white: #ffffff;
+            --gold: #ffc107;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { background: var(--purp-dark); color: white; width: 100%; max-width: 1000px; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px; border-bottom: 5px solid var(--gold); }
+        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1000px; 
+        }
+
+        /* Hauteur réduite de 25% (165px) */
+        .flashcard { height: 165px; perspective: 1000px; cursor: pointer; }
+        
+        .flashcard-inner { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform-style: preserve-3d; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+        .front, .back { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            backface-visibility: hidden; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            text-align: center;
+        }
+        
+        .front { background: var(--white); color: var(--purp-dark); border: 2px solid var(--purp-med); }
+        .front span { font-size: 11px; font-weight: bold; color: var(--purp-med); margin-bottom: 5px; text-transform: uppercase; }
+        
+        /* Texte agrandi de 25% (17.5px) */
+        .front p { font-weight: 600; font-size: 17.5px; margin: 0; line-height: 1.2; }
+        
+        .back { 
+            background: linear-gradient(135deg, var(--purp-med), var(--purp-dark));
+            color: white; 
+            transform: rotateY(180deg); 
+            font-size: 16px;
+            line-height: 1.3;
+        }
+        .back strong { color: var(--gold); display: block; margin-bottom: 5px; font-size: 18px; text-transform: uppercase; }
+
+        @media (max-width: 950px) { .grid-container { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 650px) { .grid-container { grid-template-columns: 1fr; } }
+
+        .footer { margin-top: 40px; text-align: right; width: 100%; max-width: 1000px; font-weight: bold; color: var(--purp-dark); border-top: 2px solid var(--purp-light); padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Analyse Sectorielle : Les 5 Forces de Porter</h1>
+        <p>Diagnostic de l'intensité concurrentielle</p>
+    </div>
+
+    <div class="grid-container">
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario A</span><p>"L'arrivée d'une nouvelle compagnie aérienne Low-Cost sur le trajet Casablanca-Dakhla."</p></div>
+                <div class="back"><strong>Menace des nouveaux entrants</strong>L'intensité dépend des barrières à l'entrée (licences, investissements lourds).</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario B</span><p>"La montée en puissance du TGV (Al Boraq) face aux compagnies de transport par autocar."</p></div>
+                <div class="back"><strong>Menace des produits de substitution</strong>Un service différent répond au même besoin (le voyage) avec un meilleur rapport temps/prix.</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario C</span><p>"Une coopérative laitière qui n'a qu'un seul fournisseur de packaging carton au Maroc."</p></div>
+                <div class="back"><strong>Pouvoir des fournisseurs</strong>Si le fournisseur est en monopole, il impose ses prix et ses délais.</div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario D</span><p>"Les clients qui comparent les prix des supermarchés sur une application mobile avant d'acheter."</p></div>
+                <div class="back"><strong>Pouvoir des clients</strong>L'accès à l'information et la faible fidélité augmentent le pouvoir des acheteurs.</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario E</span><p>"La guerre des promotions entre Inwi, Orange et Maroc Telecom."</p></div>
+                <div class="back"><strong>Rivalité Interne</strong>C'est la force centrale qui résulte de l'équilibre des autres forces.</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario F</span><p>"Une entreprise de logiciels possède un brevet mondial exclusif sur une technologie."</p></div>
+                <div class="back"><strong>Nouveaux Entrants</strong>Le brevet constitue une barrière à l'entrée majeure, réduisant cette menace.</div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario G</span><p>"Le passage massif des consommateurs de la presse papier vers les journaux en ligne."</p></div>
+                <div class="back"><strong>Substitution</strong>Le numérique répond au même besoin d'information par une technologie différente.</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario H</span><p>"Un constructeur automobile qui dépend d'un seul fabricant pour ses batteries lithium."</p></div>
+                <div class="back"><strong>Fournisseurs</strong>Le fournisseur est en position de force car il n'y a pas d'alternative immédiate.</div>
+            </div>
+        </div>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="flashcard-inner">
+                <div class="front"><span>Scénario I</span><p>"L'ouverture d'une petite épicerie juste à côté d'une autre épicerie de quartier."</p></div>
+                <div class="back"><strong>Nouveaux Entrants</strong>Barrières à l'entrée faibles (peu de capital requis), la menace est haute.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ</div>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Atelier Expert 20 Items - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --gold: #ffc107;
+            --white: #ffffff;
+            --green-soft: #e8f5e9;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; overflow-x: hidden; }
+        
+        .header-mini { 
+            width: 98%; max-width: 1200px; background: var(--purp-dark); color: white; 
+            padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 10px; border-bottom: 4px solid var(--gold);
+        }
+        .header-mini h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
+
+        .instruction-bar { margin-bottom: 10px; color: var(--purp-med); font-weight: bold; font-size: 14px; text-align: center; }
+
+        .main-board { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; 
+            width: 98%; max-width: 1200px; margin-bottom: 15px;
+        }
+
+        .sector-column { 
+            background: white; border: 2px solid var(--purp-light); border-radius: 8px; 
+            min-height: 380px; display: flex; flex-direction: column; align-items: center; padding: 8px;
+            transition: 0.3s; position: relative;
+        }
+        .sector-title { 
+            background: var(--purp-med); color: white; width: 100%; text-align: center; 
+            padding: 6px 0; border-radius: 4px; font-weight: bold; margin-bottom: 8px; font-size: 13px;
+        }
+
+        .tag-pool { 
+            width: 98%; max-width: 1200px; background: #f4f4f4; padding: 12px; 
+            border-radius: 8px; border: 2px dashed var(--purp-med); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+            max-height: 200px; overflow-y: auto;
+        }
+
+        .tag { 
+            background: var(--white); border: 1px solid var(--purp-med); padding: 6px 10px; 
+            border-radius: 15px; cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--purp-dark);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08); transition: 0.2s;
+        }
+        .tag:hover { background: var(--purp-light); transform: scale(1.03); }
+        .tag.selected { background: var(--gold); border-color: orange; color: #000; }
+        .tag.correct-placed { display: none; } /* On cache l'étiquette une fois rangée */
+
+        .placed-item { 
+            background: var(--green-soft); color: #1b5e20; font-size: 12px; font-weight: bold; 
+            padding: 4px 8px; margin: 3px 0; border-radius: 4px; width: 95%; text-align: center;
+            border-left: 3px solid #2e7d32; animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        .footer { width: 98%; max-width: 1200px; text-align: right; font-weight: bold; color: var(--purp-dark); font-size: 11px; margin-top: 8px; }
+        
+        /* Scrollbar styling */
+        .tag-pool::-webkit-scrollbar { width: 6px; }
+        .tag-pool::-webkit-scrollbar-thumb { background: var(--purp-med); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-mini">
+        <h1>Classification des Entreprises : Critère économique</h1>
+    </div>
+
+    <div class="instruction-bar">
+        Sélectionnez une étiquette en bas ➔ Cliquez sur le secteur pour la classer
+    </div>
+
+    <div class="main-board">
+        <div class="sector-column" onclick="drop('Primaire')" id="col-Primaire">
+            <div class="sector-title">PRIMAIRE</div>
+        </div>
+        <div class="sector-column" onclick="drop('Secondaire')" id="col-Secondaire">
+            <div class="sector-title">SECONDAIRE</div>
+        </div>
+        <div class="sector-column" onclick="drop('Tertiaire')" id="col-Tertiaire">
+            <div class="sector-title">TERTIAIRE</div>
+        </div>
+        <div class="sector-column" onclick="drop('Quaternaire')" id="col-Quaternaire">
+            <div class="sector-title">QUATERNAIRE</div>
+        </div>
+    </div>
+
+    <div class="tag-pool" id="pool"></div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
+
+    <script>
+        const rawData = [
+            // Primaire
+            { t: "Culture de Safran (Taliouine)", c: "Primaire" },
+            { t: "Extraction de Marbre", c: "Primaire" },
+            { t: "Pêche à la Sardine", c: "Primaire" },
+            { t: "Exploitation Forestière", c: "Primaire" },
+            { t: "Élevage de Volailles", c: "Primaire" },
+            // Secondaire
+            { t: "Raffinerie de Sucre", c: "Secondaire" },
+            { t: "Atelier de Maroquinerie", c: "Secondaire" },
+            { t: "Usine de Ciment", c: "Secondaire" },
+            { t: "Construction de Bâtiments", c: "Secondaire" },
+            { t: "Boulangerie Industrielle", c: "Secondaire" },
+            // Tertiaire
+            { t: "Banque Participative", c: "Tertiaire" },
+            { t: "Cabinet d'Avocats", c: "Tertiaire" },
+            { t: "Transport Ferroviaire (ONCF)", c: "Tertiaire" },
+            { t: "Grande Distribution (Marjane)", c: "Tertiaire" },
+            { t: "Hôpital Privé", c: "Tertiaire" },
+            // Quaternaire
+            { t: "Laboratoire de Biotechnologie", c: "Quaternaire" },
+            { t: "Éditeur de Jeux Vidéo", c: "Quaternaire" },
+            { t: "Centre de Cybersécurité", c: "Quaternaire" },
+            { t: "Conception de Drones", c: "Quaternaire" },
+            { t: "Intelligence Artificielle (IA)", c: "Quaternaire" }
+        ];
+
+        let activeItem = null;
+        let score = 0;
+
+        function setup() {
+            const pool = document.getElementById('pool');
+            rawData.sort(() => Math.random() - 0.5).forEach((item, index) => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerText = item.t;
+                tag.id = 'tag-' + index;
+                tag.onclick = (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+                    tag.classList.add('selected');
+                    activeItem = { ...item, domId: 'tag-' + index };
+                };
+                pool.appendChild(tag);
+            });
+        }
+
+        function drop(sector) {
+            if (!activeItem) return;
+
+            if (activeItem.c === sector) {
+                const col = document.getElementById('col-' + sector);
+                const visualTag = document.getElementById(activeItem.domId);
+                
+                const box = document.createElement('div');
+                box.className = 'placed-item';
+                box.innerText = activeItem.t;
+                col.appendChild(box);
+                
+                visualTag.classList.add('correct-placed');
+                activeItem = null;
+                score++;
+                if(score === 20) alert("Félicitations Pr. HAJJAJ ! Tous les items sont classés.");
+            } else {
+                alert("Attention : Erreur de classification pour '" + activeItem.t + "' !");
+            }
+        }
+
+        setup();
+    </script>
+</body>
+</html>
