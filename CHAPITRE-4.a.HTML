@@ -10,6 +10,8 @@
             --accent: #ffc107;
             --bg: #fdfdfd;
             --white: #ffffff;
+            --purp-light: #f3e5f5;
+            --selection: #ffc107;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
         
@@ -20,10 +22,14 @@
 
         .game-container {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 1fr;
             gap: 20px;
             width: 95%;
             max-width: 1100px;
+        }
+
+        @media (min-width: 768px) {
+            .game-container { grid-template-columns: 300px 1fr; }
         }
 
         /* Zone des missions à glisser */
@@ -32,7 +38,7 @@
             padding: 15px;
             border-radius: 10px;
             border: 2px dashed var(--secondary);
-            min-height: 500px;
+            min-height: 200px;
         }
         .mission {
             background: white;
@@ -40,17 +46,18 @@
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
-            cursor: grab;
+            cursor: pointer;
             font-size: 13px;
             font-weight: 600;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            touch-action: none;
         }
-        .mission:active { cursor: grabbing; }
+        .mission.selected { background: var(--selection); border-color: #ffa000; }
 
         /* Grille des fonctions (cibles) */
         .functions-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
         .drop-zone {
@@ -62,6 +69,7 @@
             flex-direction: column;
             padding: 10px;
             transition: 0.3s;
+            cursor: pointer;
         }
         .drop-zone.hover { background: #f3e5f5; border-color: var(--secondary); }
         
@@ -74,6 +82,7 @@
             font-size: 14px;
             margin-bottom: 10px;
             text-transform: uppercase;
+            pointer-events: none;
         }
 
         .placed-mission {
@@ -87,66 +96,58 @@
             border: 1px solid #c8e6c9;
         }
 
-        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 13px; }
+        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 13px; text-align: center; }
+
+        .btn-retour {
+            display: inline-flex; align-items: center; text-decoration: none; background-color: #6a1b9a; color: white; padding: 8px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-<div style="margin-bottom: 20px;">
-    <a href="INDEX.HTML" style="
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        background-color: #6a1b9a; /* Violet identique à votre index */
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 0.9em;
-        font-weight: bold;
-        transition: 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    ">
-        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
-    </a>
-</div>
+    <div style="margin-bottom: 10px; width: 95%; max-width: 1100px;">
+        <a href="INDEX.HTML" class="btn-retour">
+            <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+        </a>
+    </div>
+
     <div class="header">
         <h1>Les 6 Fonctions de Fayol : Organisation de l'Entreprise</h1>
-        <p style="margin: 5px 0 0 0; font-size: 14px;">Faites glisser les opérations vers la fonction correspondante</p>
+        <p style="margin: 5px 0 0 0; font-size: 14px;">Mode Mobile : Cliquez sur une mission puis sur sa fonction</p>
     </div>
 
     <div class="game-container">
         <div class="missions-pool" id="pool">
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m1" data-cat="technique">Fabrication et transformation</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m2" data-cat="commerciale">Achat de matières premières</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m3" data-cat="financière">Gestion des capitaux</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m4" data-cat="sécurité">Protection des personnes</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m5" data-cat="comptable">Inventaire et Bilan</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m6" data-cat="administrative">Prévoir et Organiser</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m7" data-cat="technique">Production de biens</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m8" data-cat="commerciale">Vente et Échange</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m9" data-cat="financière">Recherche de financements</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m10" data-cat="sécurité">Protection des biens</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m11" data-cat="comptable">Calcul du prix de revient</div>
-            <div class="mission" draggable="true" ondragstart="drag(event)" id="m12" data-cat="administrative">Commander et Coordonner</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m1" data-cat="technique">Fabrication et transformation</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m2" data-cat="commerciale">Achat de matières premières</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m3" data-cat="financière">Gestion des capitaux</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m4" data-cat="sécurité">Protection des personnes</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m5" data-cat="comptable">Inventaire et Bilan</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m6" data-cat="administrative">Prévoir et Organiser</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m7" data-cat="technique">Production de biens</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m8" data-cat="commerciale">Vente et Échange</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m9" data-cat="financière">Recherche de financements</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m10" data-cat="sécurité">Protection des biens</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m11" data-cat="comptable">Calcul du prix de revient</div>
+            <div class="mission" draggable="true" ondragstart="drag(event)" onclick="handleSelect(this)" id="m12" data-cat="administrative">Commander et Coordonner</div>
         </div>
 
         <div class="functions-grid">
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="technique">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="technique">
                 <div class="zone-title">1. Technique</div>
             </div>
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="commerciale">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="commerciale">
                 <div class="zone-title">2. Commerciale</div>
             </div>
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="financière">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="financière">
                 <div class="zone-title">3. Financière</div>
             </div>
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="sécurité">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="sécurité">
                 <div class="zone-title">4. Sécurité</div>
             </div>
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="comptable">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="comptable">
                 <div class="zone-title">5. Comptable</div>
             </div>
-            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" id="administrative">
+            <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="handleZoneClick(this)" id="administrative">
                 <div class="zone-title">6. Administrative</div>
             </div>
         </div>
@@ -155,6 +156,8 @@
     <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
 
     <script>
+        let selectedMission = null;
+
         function allowDrop(ev) {
             ev.preventDefault();
             ev.currentTarget.classList.add('hover');
@@ -164,23 +167,38 @@
             ev.dataTransfer.setData("text", ev.target.id);
         }
 
+        // Gestion Mobile : Sélection de la mission
+        function handleSelect(el) {
+            if (selectedMission) selectedMission.classList.remove('selected');
+            selectedMission = el;
+            el.classList.add('selected');
+        }
+
+        // Gestion Mobile : Clic sur la zone cible
+        function handleZoneClick(zone) {
+            if (selectedMission) {
+                validateAndPlace(selectedMission, zone);
+                selectedMission.classList.remove('selected');
+                selectedMission = null;
+            }
+        }
+
         function drop(ev) {
             ev.preventDefault();
             const zone = ev.currentTarget;
             zone.classList.remove('hover');
-            
             const data = ev.dataTransfer.getData("text");
             const missionEl = document.getElementById(data);
-            const category = missionEl.getAttribute('data-cat');
+            validateAndPlace(missionEl, zone);
+        }
 
-            // Vérification si la zone correspond à la catégorie
-            if (zone.id === category) {
+        function validateAndPlace(el, zone) {
+            if (zone.id === el.getAttribute('data-cat')) {
                 const placed = document.createElement('div');
                 placed.className = 'placed-mission';
-                placed.innerText = missionEl.innerText;
+                placed.innerText = el.innerText;
                 zone.appendChild(placed);
-                missionEl.style.display = 'none'; // Cacher l'original
-                
+                el.style.display = 'none';
                 checkWin();
             } else {
                 alert("Mauvaise fonction ! Relisez la diapo de Fayol.");
@@ -188,13 +206,12 @@
         }
 
         function checkWin() {
-            const remaining = document.querySelectorAll('.mission[style="display: block;"], .mission:not([style])');
+            const remaining = document.querySelectorAll('.mission:not([style*="display: none"])');
             if (remaining.length === 0) {
                 alert("Félicitations ! Vous avez classé toutes les opérations selon Henri Fayol.");
             }
         }
 
-        // Empêcher l'effet de surbrillance de rester si on quitte la zone
         document.querySelectorAll('.drop-zone').forEach(zone => {
             zone.addEventListener('dragleave', (e) => {
                 e.currentTarget.classList.remove('hover');
