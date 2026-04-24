@@ -9,6 +9,7 @@
             --secondary: #7b1fa2;
             --accent: #ffc107;
             --bg: #fdfdfd;
+            --selection: #ffc107;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
         
@@ -20,10 +21,13 @@
 
         .game-container {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 1fr;
             gap: 20px;
             width: 95%;
             max-width: 1100px;
+        }
+        @media (min-width: 768px) {
+            .game-container { grid-template-columns: 350px 1fr; }
         }
 
         .pool {
@@ -31,7 +35,7 @@
             padding: 15px;
             border-radius: 10px;
             border: 2px dashed var(--secondary);
-            min-height: 500px;
+            min-height: 200px;
         }
 
         .example-card {
@@ -40,15 +44,22 @@
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 6px;
-            cursor: grab;
+            cursor: pointer;
             font-size: 13px;
             font-weight: 600;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            touch-action: none;
+        }
+        .example-card.selected { 
+            background: var(--selection); 
+            border-color: #ffa000; 
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
         }
 
         .targets {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
@@ -60,6 +71,8 @@
             padding: 10px;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
         .drop-zone.hover { background: #f3e5f5; border-color: var(--secondary); }
@@ -73,6 +86,7 @@
             font-size: 13px;
             font-weight: bold;
             margin-bottom: 10px;
+            pointer-events: none;
         }
 
         .placed {
@@ -86,31 +100,23 @@
             margin-bottom: 5px;
         }
 
-        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; }
+        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; text-align: center; }
+
+        .btn-retour {
+            display: inline-flex; align-items: center; text-decoration: none; background-color: #6a1b9a; color: white; padding: 8px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
-<div style="margin-bottom: 20px;">
-    <a href="INDEX.HTML" style="
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        background-color: #6a1b9a; /* Violet identique à votre index */
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 0.9em;
-        font-weight: bold;
-        transition: 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    ">
-        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
-    </a>
-</div>
+    <div style="margin-bottom: 10px; width: 95%; max-width: 1000px;">
+        <a href="INDEX.HTML" class="btn-retour">
+            <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+        </a>
+    </div>
+
     <div class="header-mini">
         <h1>Cas Pratiques : La Coordination selon Mintzberg</h1>
-        <p>Faites glisser l'exemple concret vers son mode de coordination</p>
+        <p style="margin: 5px 0 0 0; font-size: 13px;">Cliquez sur un exemple puis sur son mode de coordination (ou glissez-le sur PC)</p>
     </div>
 
     <div class="game-container">
@@ -122,28 +128,28 @@
             <div class="example-card" draggable="true" id="e5" data-cat="resultats">Un commercial qui doit résoudre un malentendu avec le client et le satisfaire peu importe sa méthode.</div>
             <div class="example-card" draggable="true" id="e6" data-cat="qualifications">Un chirurgien qui opère grâce à ses 10 ans d'études et son diplôme.</div>
             <div class="example-card" draggable="true" id="e7" data-cat="normes">Tous les départements de l'entreprise respectent strictement la norme ISO 9001 (Qualité) certifiée.</div>
-	    <div class="example-card" draggable="true" id="e8" data-cat="procedes">Un nouvel employé suit une procédure écrite pas à pas pour configurer un compte client.</div>	
+            <div class="example-card" draggable="true" id="e8" data-cat="procedes">Un nouvel employé suit une procédure écrite pas à pas pour configurer un compte client.</div>    
             <div class="example-card" draggable="true" id="e9" data-cat="qualifications">Un architecte diplômé conçoit un plan grâce à ses années d'études.</div>
-  	    <div class="example-card" draggable="true" id="e10" data-cat="supervision">Un chef d'équipe surveille et donne des instructions directes aux ouvriers sur une ligne d'assemblage.</div>
-</div>
+            <div class="example-card" draggable="true" id="e10" data-cat="supervision">Un chef d'équipe surveille et donne des instructions directes aux ouvriers sur une ligne d'assemblage.</div>
+        </div>
 
         <div class="targets">
-            <div class="drop-zone" id="ajustement" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="ajustement" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Ajustement mutuel</div>
             </div>
-            <div class="drop-zone" id="supervision" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="supervision" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Supervision directe</div>
             </div>
-            <div class="drop-zone" id="procedes" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="procedes" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Standardisation des procédés</div>
             </div>
-            <div class="drop-zone" id="resultats" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="resultats" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Standardisation des résultats</div>
             </div>
-            <div class="drop-zone" id="qualifications" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="qualifications" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Standardisation des qualifications</div>
             </div>
-            <div class="drop-zone" id="normes" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="normes" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Standardisation des normes</div>
             </div>
         </div>
@@ -152,33 +158,71 @@
     <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
 
     <script>
+        let selectedCard = null;
+
         function allow(ev) { ev.preventDefault(); ev.currentTarget.classList.add('hover'); }
         
         document.querySelectorAll('.drop-zone').forEach(z => {
             z.addEventListener('dragleave', e => e.currentTarget.classList.remove('hover'));
         });
 
-        document.querySelectorAll('.example-card').forEach(d => {
-            d.addEventListener('dragstart', e => e.dataTransfer.setData("text", e.target.id));
+        document.querySelectorAll('.example-card').forEach(card => {
+            card.addEventListener('dragstart', e => {
+                e.dataTransfer.setData("text", e.target.id);
+                card.classList.add('selected');
+            });
+            card.addEventListener('dragend', () => card.classList.remove('selected'));
+            
+            // Mobile: Sélection au clic
+            card.addEventListener('click', (e) => {
+                if (selectedCard) selectedCard.classList.remove('selected');
+                selectedCard = card;
+                card.classList.add('selected');
+                e.stopPropagation();
+            });
         });
 
-        function drop(ev) {
-            ev.preventDefault();
-            const zone = ev.currentTarget;
-            zone.classList.remove('hover');
-            const id = ev.dataTransfer.getData("text");
-            const el = document.getElementById(id);
-            
+        // Fonction de validation commune
+        function validate(el, zone) {
             if (zone.id === el.getAttribute('data-cat')) {
                 const tag = document.createElement('div');
                 tag.className = 'placed';
                 tag.innerText = el.innerText;
                 zone.appendChild(tag);
                 el.style.display = 'none';
+                return true;
             } else {
                 alert("Mauvais choix ! Réfléchissez au mécanisme de contrôle utilisé dans cet exemple.");
+                return false;
             }
         }
+
+        // Drop sur PC
+        function handleDrop(ev) {
+            ev.preventDefault();
+            const zone = ev.currentTarget;
+            zone.classList.remove('hover');
+            const id = ev.dataTransfer.getData("text");
+            const el = document.getElementById(id);
+            if (el) validate(el, zone);
+        }
+
+        // Tap sur Mobile
+        function handleZoneClick(zone) {
+            if (selectedCard) {
+                validate(selectedCard, zone);
+                selectedCard.classList.remove('selected');
+                selectedCard = null;
+            }
+        }
+
+        // Désélectionner si on clique ailleurs
+        document.addEventListener('click', () => {
+            if (selectedCard) {
+                selectedCard.classList.remove('selected');
+                selectedCard = null;
+            }
+        });
     </script>
 </body>
 </html>
