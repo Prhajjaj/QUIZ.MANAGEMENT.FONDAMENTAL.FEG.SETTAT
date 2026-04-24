@@ -9,130 +9,147 @@
             --purple-light: #f3e5f5; 
             --accent: #9c27b0;
             --bg: #fafafa; 
+            --selection: #ffc107;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
         
         .header-course { width: 100%; max-width: 1000px; background: var(--purple-dark); color: white; padding: 20px; border-radius: 12px 12px 0 0; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header-course h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-course h1 { margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .container { display: flex; gap: 30px; max-width: 1000px; width: 100%; background: white; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .container { display: flex; flex-direction: column; gap: 20px; max-width: 1000px; width: 100%; background: white; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
+        /* Ajustement PC */
+        @media (min-width: 768px) {
+            .container { flex-direction: row; padding: 30px; }
+        }
+
         /* Zones de dépôt */
-        .zones { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 2; }
-        .box { background: var(--purple-light); border: 2px dashed var(--purple-dark); border-radius: 12px; padding: 15px; min-height: 160px; transition: 0.3s; display: flex; flex-direction: column; }
-        .box h3 { color: var(--purple-dark); margin-top: 0; border-bottom: 2px solid rgba(106, 27, 154, 0.2); padding-bottom: 5px; font-size: 16px; text-align: center; }
+        .zones { display: grid; grid-template-columns: 1fr; gap: 15px; flex: 2; }
+        @media (min-width: 600px) { .zones { grid-template-columns: 1fr 1fr; } }
+
+        .box { background: var(--purple-light); border: 2px dashed var(--purple-dark); border-radius: 12px; padding: 15px; min-height: 120px; transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
+        .box h3 { color: var(--purple-dark); margin-top: 0; border-bottom: 2px solid rgba(106, 27, 154, 0.2); padding-bottom: 5px; font-size: 15px; text-align: center; pointer-events: none; }
         .box.over { background: #e1bee7; transform: scale(1.02); border-style: solid; }
 
         /* Éléments à trier */
         .items-column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .drag-item { background: white; color: var(--purple-dark); border: 2px solid var(--purple-dark); padding: 12px; border-radius: 8px; cursor: grab; font-size: 13px; font-weight: 500; text-align: center; transition: 0.2s; }
-        .drag-item:hover { background: var(--purple-dark); color: white; }
+        .drag-item { background: white; color: var(--purple-dark); border: 2px solid var(--purple-dark); padding: 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; text-align: center; transition: 0.2s; touch-action: none; }
+        .drag-item:hover { background: var(--purple-light); }
+        .drag-item.selected { background: var(--selection); border-color: #ffa000; box-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
+        .drag-item.dragging { opacity: 0.5; background: var(--purple-dark); color: white; }
         
-        .footer-prof { width: 100%; max-width: 1000px; margin-top: 20px; text-align: right; color: var(--purple-dark); font-weight: bold; border-top: 2px solid var(--purple-dark); padding-top: 10px; }
+        .footer-prof { width: 100%; max-width: 1000px; margin-top: 20px; text-align: right; color: var(--purple-dark); font-weight: bold; border-top: 2px solid var(--purple-dark); padding-top: 10px; font-size: 12px; }
 
-        .instructions { background: #fff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 5px solid var(--accent); max-width: 1000px; width: 95%; font-size: 14px; }
-    </style>
-</head>
-<body>
-<div style="margin-bottom: 20px;">
-    <a href="INDEX.HTML" style="
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        background-color: #6a1b9a; /* Violet identique à votre index */
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 0.9em;
-        font-weight: bold;
-        transition: 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    ">
-        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
-    </a>
-</div>
-    <div class="header-course">
-        <h1>Management des Organisations : L'Entreprise comme Système</h1>
-    </div>
+        .instructions { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid var(--accent); max-width: 1000px; width: 95%; font-size: 13px; box-sizing: border-box; }
 
-    <div class="instructions">
-        <strong>Exercice interactif :</strong> Glissez chaque situation concrète dans la catégorie correspondante de l'approche systémique.
-    </div>
+        .btn-retour {
+            display: inline-flex; align-items: center; text-decoration: none; background-color: var(--purple-dark); color: white; padding: 8px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px;
+        }
 
-    <div class="container">
-        <div class="items-column" id="source">
-            <div class="drag-item" draggable="true" data-cat="ouvert">Paiement de la TVA à la Direction Générale des Impôts</div>
-	    <div class="drag-item" draggable="true" data-cat="organise">La femme de ménage veille à la propreté des locaux</div>
-	    <div class="drag-item" draggable="true" data-cat="dynamique">L'entreprise s'adapte suite à la pandémie (livraison à domicile)</div>
-            <div class="drag-item" draggable="true" data-cat="finalise">IAM (Maroc Telecom) vise une croissance de 2% de son CA</div>
-            <div class="drag-item" draggable="true" data-cat="finalise">Décider d'ouvrir un nouveau point de vente pour augmenter les profits</div>
-            <div class="drag-item" draggable="true" data-cat="ouvert">Une usine de textile achète du tissu en Turquie</div>
-	    <div class="drag-item" draggable="true" data-cat="organise">Définir qui s'occupe du stock et qui s'occupe de la vente</div>
-            <div class="drag-item" draggable="true" data-cat="dynamique">Une boulangerie lance la livraison via 'Glovo' à cause de la pluie</div>
-            
-        </div>
-
-        <div class="zones">
-            <div class="box" data-target="ouvert">
-                <h3>Système OUVERT</h3>
-            </div>
-            <div class="box" data-target="finalise">
-                <h3>Système FINALISÉ</h3>
-            </div>
-            <div class="box" data-target="organise">
-                <h3>Système ORGANISÉ</h3>
-            </div>
-            <div class="box" data-target="dynamique">
-                <h3>Système DYNAMIQUE</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer-prof">
-        Pr. Mouna HAJJAJ
-    </div>
-
-    <script>
-        const draggables = document.querySelectorAll('.drag-item');
-        const boxes = document.querySelectorAll('.box');
-
-        draggables.forEach(item => {
-            item.addEventListener('dragstart', () => item.classList.add('dragging'));
-            item.addEventListener('dragend', () => item.classList.remove('dragging'));
-        });
-
-        boxes.forEach(box => {
-            box.addEventListener('dragover', e => {
-                e.preventDefault();
-                box.classList.add('over');
-            });
-            box.addEventListener('dragleave', () => box.classList.remove('over'));
-            box.addEventListener('drop', e => {
-                e.preventDefault();
-                box.classList.remove('over');
-                const draggedItem = document.querySelector('.dragging');
-                
-                if (draggedItem.dataset.cat === box.dataset.target) {
-                    box.appendChild(draggedItem);
-                    draggedItem.style.background = "#6a1b9a";
-                    draggedItem.style.color = "white";
-                    draggedItem.draggable = false;
-                } else {
-                    draggedItem.style.animation = "shake 0.4s";
-                    setTimeout(() => draggedItem.style.animation = "", 400);
-                }
-            });
-        });
-    </script>
-
-    <style>
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-8px); border-color: #f44336; }
             75% { transform: translateX(8px); border-color: #f44336; }
         }
     </style>
+</head>
+<body>
 
+    <a href="INDEX.HTML" class="btn-retour">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+
+    <div class="header-course">
+        <h1>L'Entreprise comme Système</h1>
+    </div>
+
+    <div class="instructions">
+        <strong>Mode d'emploi :</strong> Sur mobile, cliquez sur une situation puis sur la boîte correspondante. Sur PC, vous pouvez aussi glisser-déposer.
+    </div>
+
+    <div class="container">
+        <div class="items-column" id="source">
+            <div class="drag-item" draggable="true" data-cat="ouvert">Paiement de la TVA à la DGI</div>
+            <div class="drag-item" draggable="true" data-cat="organise">La femme de ménage veille à la propreté</div>
+            <div class="drag-item" draggable="true" data-cat="dynamique">Adaptation Covid (livraison à domicile)</div>
+            <div class="drag-item" draggable="true" data-cat="finalise">Maroc Telecom vise +2% de CA</div>
+            <div class="drag-item" draggable="true" data-cat="finalise">Ouvrir un point de vente pour les profits</div>
+            <div class="drag-item" draggable="true" data-cat="ouvert">Achat de tissu en Turquie</div>
+            <div class="drag-item" draggable="true" data-cat="organise">Répartition stock / vente</div>
+            <div class="drag-item" draggable="true" data-cat="dynamique">Livraison Glovo à cause de la pluie</div>
+        </div>
+
+        <div class="zones">
+            <div class="box" data-target="ouvert" ondrop="drop(event)" ondragover="allow(event)" onclick="boxClick(this)">
+                <h3>Système OUVERT</h3>
+            </div>
+            <div class="box" data-target="finalise" ondrop="drop(event)" ondragover="allow(event)" onclick="boxClick(this)">
+                <h3>Système FINALISÉ</h3>
+            </div>
+            <div class="box" data-target="organise" ondrop="drop(event)" ondragover="allow(event)" onclick="boxClick(this)">
+                <h3>Système ORGANISÉ</h3>
+            </div>
+            <div class="box" data-target="dynamique" ondrop="drop(event)" ondragover="allow(event)" onclick="boxClick(this)">
+                <h3>Système DYNAMIQUE</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-prof">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
+
+    <script>
+        let selectedItem = null;
+
+        // --- Fonctions communes ---
+        function validatePlacement(item, box) {
+            if (item.dataset.cat === box.dataset.target) {
+                box.appendChild(item);
+                item.style.background = "#6a1b9a";
+                item.style.color = "white";
+                item.style.cursor = "default";
+                item.draggable = false;
+                item.classList.remove('selected');
+                return true;
+            } else {
+                item.style.animation = "shake 0.4s";
+                setTimeout(() => item.style.animation = "", 400);
+                return false;
+            }
+        }
+
+        // --- PC: Glisser-Déposer ---
+        function allow(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
+        
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', () => item.classList.add('dragging'));
+            item.addEventListener('dragend', () => item.classList.remove('dragging'));
+            
+            // --- Mobile: Sélection ---
+            item.addEventListener('click', (e) => {
+                if (!item.draggable) return;
+                if (selectedItem) selectedItem.classList.remove('selected');
+                selectedItem = item;
+                item.classList.add('selected');
+                e.stopPropagation();
+            });
+        });
+
+        function drop(ev) {
+            ev.preventDefault();
+            const box = ev.currentTarget;
+            box.classList.remove('over');
+            const draggedItem = document.querySelector('.dragging');
+            if (draggedItem) validatePlacement(draggedItem, box);
+        }
+
+        // --- Mobile: Clic sur boîte ---
+        function boxClick(box) {
+            if (selectedItem) {
+                validatePlacement(selectedItem, box);
+                selectedItem.classList.remove('selected');
+                selectedItem = null;
+            }
+        }
+    </script>
 </body>
 </html>
