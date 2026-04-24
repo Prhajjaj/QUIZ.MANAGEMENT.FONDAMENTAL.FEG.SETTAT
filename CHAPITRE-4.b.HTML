@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Système Entreprise - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root {
+            --primary: #4a148c;
+            --secondary: #7b1fa2;
+            --accent: #ffc107;
+            --bg: #fdfdfd;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        
+        /* Header réduit comme demandé */
+        .header-mini { 
+            width: 95%; max-width: 900px; background: var(--primary); color: white; 
+            padding: 8px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--accent); margin-bottom: 10px;
+        }
+        .header-mini h1 { margin: 0; font-size: 18px; }
+        .header-mini p { margin: 2px 0 0 0; font-size: 12px; }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            width: 95%;
+            max-width: 900px;
+            margin-top: 10px;
+        }
+
+        .column {
+            background: #fff;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            min-height: 300px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .column-title {
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .item-pool {
+            grid-column: span 3;
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .draggable-item {
+            background: white;
+            border: 1px solid var(--secondary);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: grab;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .drop-zone {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dropped {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+            border: 1px solid #c8e6c9;
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop { from {transform: scale(0.8);} to {transform: scale(1);} }
+
+        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header-mini">
+        <h1>L'Entreprise comme Système Ouvert</h1>
+        <p>Classez les éléments selon qu'ils entrent, sortent ou entourent l'entreprise</p>
+    </div>
+
+    <div class="item-pool" id="pool">
+        <div class="draggable-item" draggable="true" id="i1" data-cat="entrees">Matières premières</div>
+        <div class="draggable-item" draggable="true" id="i2" data-cat="entrees">Capitaux (Investissements)</div>
+        <div class="draggable-item" draggable="true" id="i3" data-cat="sorties">Produits finis</div>
+        <div class="draggable-item" draggable="true" id="i4" data-cat="sorties">Services rendus</div>
+        <div class="draggable-item" draggable="true" id="i5" data-cat="environnement">Clients et Fournisseurs</div>
+        <div class="draggable-item" draggable="true" id="i6" data-cat="environnement">État et Banques</div>
+        <div class="draggable-item" draggable="true" id="i7" data-cat="entrees">Informations et Énergie</div>
+        <div class="draggable-item" draggable="true" id="i8" data-cat="sorties">Déchets et Rejets</div>
+        <div class="draggable-item" draggable="true" id="i9" data-cat="environnement">Concurrence</div>
+    </div>
+
+    <div class="game-board">
+        <div class="column" id="entrees" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="column-title">📥 ENTRÉES (Inputs)</div>
+            <div class="drop-zone"></div>
+        </div>
+        
+        <div class="column" id="environnement" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="column-title">🌐 ENVIRONNEMENT</div>
+            <div class="drop-zone"></div>
+        </div>
+
+        <div class="column" id="sorties" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="column-title">📤 SORTIES (Outputs)</div>
+            <div class="drop-zone"></div>
+        </div>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Hassan First University</div>
+
+    <script>
+        document.querySelectorAll('.draggable-item').forEach(item => {
+            item.addEventListener('dragstart', e => {
+                e.dataTransfer.setData("text", e.target.id);
+            });
+        });
+
+        function allowDrop(ev) { ev.preventDefault(); }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.setData ? "" : ""; // Dummy
+            const id = ev.dataTransfer.getData("text");
+            const item = document.getElementById(id);
+            const targetCategory = ev.currentTarget.id;
+            const itemCategory = item.getAttribute('data-cat');
+
+            if (targetCategory === itemCategory) {
+                const zone = ev.currentTarget.querySelector('.drop-zone');
+                const div = document.createElement('div');
+                div.className = 'dropped';
+                div.innerText = item.innerText;
+                zone.appendChild(div);
+                item.style.visibility = 'hidden';
+            } else {
+                alert("Cet élément ne fait pas partie de ce flux ! Relisez l'approche systémique.");
+            }
+        }
+    </script>
+</body>
+</html>

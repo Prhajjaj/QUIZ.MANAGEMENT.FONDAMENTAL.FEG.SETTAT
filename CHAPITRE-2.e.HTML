@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Environnement Entreprise - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --white: #ffffff; 
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fafafa; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { background: var(--purp-dark); color: white; width: 100%; max-width: 900px; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(74, 20, 140, 0.2); }
+        
+        .container { display: flex; gap: 20px; width: 100%; max-width: 900px; }
+        
+        /* Liste des acteurs */
+        .source-list { flex: 1; background: var(--white); padding: 15px; border-radius: 12px; border: 2px solid var(--purp-light); }
+        .item { background: var(--purp-light); color: var(--purp-dark); padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: grab; font-size: 14px; font-weight: 600; text-align: center; transition: 0.3s; border: 1px solid transparent; }
+        .item:hover { border-color: var(--purp-med); transform: scale(1.02); }
+
+        /* Zones cibles */
+        .target-zones { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .zone { background: white; border: 2px dashed var(--purp-med); border-radius: 15px; padding: 15px; min-height: 250px; transition: 0.3s; }
+        .zone h3 { margin-top: 0; color: var(--purp-dark); font-size: 16px; border-bottom: 2px solid var(--purp-light); padding-bottom: 10px; text-align: center; text-transform: uppercase; }
+        .zone.hover { background: #fdf0ff; transform: scale(1.01); border-style: solid; }
+
+        #feedback { margin-top: 20px; width: 100%; max-width: 900px; padding: 15px; border-radius: 10px; display: none; background: #e8f5e9; color: #2e7d32; border-left: 5px solid #2e7d32; font-size: 14px; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .footer { margin-top: 30px; text-align: right; width: 100%; max-width: 900px; font-weight: bold; color: var(--purp-dark); border-top: 2px solid var(--purp-light); padding-top: 10px; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header">
+        <h1>🔍 Analyse de l'Environnement</h1>
+        <p>Savoir distinguer les forces du Marché (Micro) des influences Globales (Macro)</p>
+    </div>
+
+    <div class="container">
+        <div class="source-list" id="items">
+            <div class="item" draggable="true" data-type="micro">Les Clients (Exigences de qualité)</div>
+            <div class="item" draggable="true" data-type="macro">Évolution technologique (Intelligence Artificielle)</div>
+            <div class="item" draggable="true" data-type="micro">Les Concurrents (Guerre des prix)</div>
+            <div class="item" draggable="true" data-type="macro">Inflation au Maroc (Pouvoir d'achat global)</div>
+            <div class="item" draggable="true" data-type="micro">Les Fournisseurs (Délais de livraison)</div>
+            <div class="item" draggable="true" data-type="macro">Réglementation fiscale (Loi de finances)</div>
+            <div class="item" draggable="true" data-type="micro">Les Banques (Accès aux crédits)</div>
+            <div class="item" draggable="true" data-type="macro">Stabilité politique du Royaume</div>
+        </div>
+
+        <div class="target-zones">
+            <div class="zone" data-target="micro">
+                <h3>Micro-Environnement</h3>
+                <p style="font-size: 11px; text-align: center; color: #666;">(Actions directes sur l'entreprise)</p>
+            </div>
+            <div class="zone" data-target="macro">
+                <h3>Macro-Environnement</h3>
+                <p style="font-size: 11px; text-align: center; color: #666;">(Dimensions PESTEL globales)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback"></div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - </div>
+
+    <script>
+        const draggables = document.querySelectorAll('.item');
+        const zones = document.querySelectorAll('.zone');
+
+        draggables.forEach(item => {
+            item.addEventListener('dragstart', () => item.classList.add('dragging'));
+            item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        });
+
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('hover');
+            });
+            zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('hover');
+                const item = document.querySelector('.dragging');
+                
+                if (item.dataset.type === zone.dataset.target) {
+                    zone.appendChild(item);
+                    item.style.background = "#e8f5e9";
+                    item.style.color = "#2e7d32";
+                    item.draggable = false;
+                    showFeedback(`Bien joué ! L'élément "${item.innerText}" est correctement placé.`, true);
+                } else {
+                    item.style.animation = "shake 0.4s";
+                    showFeedback("Erreur de diagnostic. Réfléchissez : est-ce un acteur direct ou une force globale ?", false);
+                    setTimeout(() => item.style.animation = "", 400);
+                }
+            });
+        });
+
+        function showFeedback(text, isCorrect) {
+            const fb = document.getElementById('feedback');
+            fb.style.display = 'block';
+            fb.style.background = isCorrect ? "#e8f5e9" : "#ffebee";
+            fb.style.color = isCorrect ? "#2e7d32" : "#c62828";
+            fb.style.borderColor = isCorrect ? "#2e7d32" : "#c62828";
+            fb.innerHTML = `<strong>${isCorrect ? '✅ Succès' : '❌ Aide'} :</strong> ${text}`;
+        }
+    </script>
+
+    <style>
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    </style>
+</body>
+</html>

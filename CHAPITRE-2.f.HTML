@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Quiz Maroc : Classification - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root {
+            --primary: #4a148c; 
+            --secondary: #7b1fa2;
+            --accent: #ffc107;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --success: #2e7d32;
+            --error: #c62828;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            max-width: 1000px;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+            border-bottom: 5px solid var(--accent);
+        }
+
+        .main-container {
+            background-color: white;
+            width: 100%;
+            max-width: 1000px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .case-section {
+            border: 2px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .case-header {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .scenario {
+            padding: 20px;
+            background: #fdfaff;
+            border-bottom: 1px solid #eee;
+            font-style: italic;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .questions {
+            padding: 20px;
+        }
+
+        .question-item {
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .opt-btn {
+            padding: 12px;
+            border: 2px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .opt-btn:hover { background: #f3e5f5; }
+        .opt-btn.correct { background: var(--success) !important; color: white !important; border-color: #1b5e20; }
+        .opt-btn.wrong { background: var(--error) !important; color: white !important; border-color: #b71c1c; }
+
+        .feedback {
+            margin-top: 8px;
+            font-size: 0.9em;
+            font-weight: bold;
+            min-height: 1.2em;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+<div class="header">
+    <h1>Synthèse : Classification des Entreprises (Normes Maroc)</h1>
+    <p>Préparez vos étudiants avec les seuils de la PME marocaine</p>
+</div>
+
+<div class="main-container">
+
+    <div class="case-section">
+        <div class="case-header">
+            <span>CAS 1 : AGRI-TECH MAROC</span>
+            <span>Économique & Juridique</span>
+        </div>
+        <div class="scenario">
+            "Nous sommes une structure basée à Settat. Nous produisons des <strong>capteurs intelligents pour l'irrigation</strong>. Nous sommes trois associés responsables de manière <strong>illimitée</strong> sur nos biens personnels."
+        </div>
+        <div class="questions">
+            <div class="question-item">
+                <span class="question-text">1. À quel secteur appartient cette activité de haute technologie ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, true, 'Correct ! Le Quaternaire regroupe les activités liées à la connaissance et aux technologies.')">Quaternaire</button>
+                    <button class="opt-btn" onclick="check(this, false, 'Faux. Le secteur primaire concerne l\'extraction directe.')">Primaire</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            <div class="question-item">
+                <span class="question-text">2. Quelle est la nature juridique de cette entreprise ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, false, 'Faux. Responsabilité limitée = Société de capitaux.')">Société de Capitaux</button>
+                    <button class="opt-btn" onclick="check(this, true, 'Bien joué ! La responsabilité illimitée caractérise les sociétés de personnes.')">Société de Personnes</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-section">
+        <div class="case-header">
+            <span>CAS 2 : L'ATELIER DE TISSAGE</span>
+            <span>Critère de Taille (Maroc)</span>
+        </div>
+        <div class="scenario">
+            "Mon atelier transforme la laine brute en tapis artisanaux. J'emploie <strong>25 salariés</strong> et mon Chiffre d'Affaires annuel est de <strong>6 Millions de Dhs</strong>."
+        </div>
+        <div class="questions">
+            <div class="question-item">
+                <span class="question-text">1. Selon les seuils au Maroc, comment classer cette entreprise ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, true, 'Correct. Au Maroc, une TPE a un CA entre 3 et 10 MDHS et entre 11 et 50 employés.')">Très Petite Entreprise (TPE)</button>
+                    <button class="opt-btn" onclick="check(this, false, 'Faux. La Grande Entreprise dépasse largement ces seuils au Maroc.')">Grande Entreprise</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            <div class="question-item">
+                <span class="question-text">2. Quel est le secteur d'activité dominant ici ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, true, 'Exact ! Transformation de matières premières = Secondaire.')">Secteur Secondaire</button>
+                    <button class="opt-btn" onclick="check(this, false, 'Faux. Le tertiaire est réservé aux services.')">Secteur Tertiaire</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-section">
+        <div class="case-header">
+            <span>CAS 3 : TRANSPORT LOGISTIQUE SA</span>
+            <span>Performance & Juridique</span>
+        </div>
+        <div class="scenario">
+            "Transport de marchandises. Production totale : <strong>10 MDHS</strong> / Consommations intermédiaires : <strong>6 MDHS</strong>. Nous sommes une Société Anonyme."
+        </div>
+        <div class="questions">
+            <div class="question-item">
+                <span class="question-text">1. Quelle est la Valeur Ajoutée (VA) créée ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, false, 'Erreur. VA = Production - C.I.')">10 Millions Dhs</button>
+                    <button class="opt-btn" onclick="check(this, true, 'Bravo ! 10M - 6M = 4 Millions Dhs de VA.')">4 Millions Dhs</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            <div class="question-item">
+                <span class="question-text">2. Quel est le risque pour un actionnaire de cette SA ?</span>
+                <div class="options">
+                    <button class="opt-btn" onclick="check(this, true, 'Correct. La responsabilité est limitée à son apport.')">Perdre uniquement son apport</button>
+                    <button class="opt-btn" onclick="check(this, false, 'Faux. C\'est le risque des sociétés de personnes.')">Responsabilité illimitée</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    Pr. Mouna HAJJAJ - Management Fondamental S2
+</div>
+
+<script>
+    function check(btn, isCorrect, msg) {
+        const parent = btn.parentElement;
+        const feedback = parent.nextElementSibling;
+        const buttons = parent.querySelectorAll('.opt-btn');
+
+        buttons.forEach(b => b.disabled = true);
+
+        if(isCorrect) {
+            btn.classList.add('correct');
+            feedback.innerHTML = "✅ " + msg;
+            feedback.style.color = "var(--success)";
+        } else {
+            btn.classList.add('wrong');
+            feedback.innerHTML = "❌ " + msg;
+            feedback.style.color = "var(--error)";
+        }
+    }
+</script>
+
+</body>
+</html>

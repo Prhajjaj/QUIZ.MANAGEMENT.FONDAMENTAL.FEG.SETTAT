@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercice SWOT - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --gold: #ffc107;
+            --green: #2e7d32;
+            --red: #c62828;
+            --white: #ffffff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { background: var(--purp-dark); color: white; width: 100%; max-width: 800px; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px; border-bottom: 5px solid var(--gold); }
+        .header h1 { margin: 0; font-size: 26px; text-transform: uppercase; }
+
+        .quiz-container { width: 100%; max-width: 800px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid var(--purp-light); }
+        
+        .progress { margin-bottom: 15px; font-size: 16px; color: #666; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        .question-box { margin-bottom: 20px; padding: 20px; border-left: 6px solid var(--purp-med); background: #f9f9f9; border-radius: 0 10px 10px 0; }
+        .scenario { font-size: 22px; font-weight: 600; color: var(--purp-dark); margin-bottom: 20px; line-height: 1.4; }
+        
+        .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        
+        button.opt { 
+            padding: 18px; font-size: 18px; font-weight: bold; cursor: pointer; border: 2px solid var(--purp-med); 
+            background: white; color: var(--purp-med); border-radius: 10px; transition: all 0.2s ease;
+        }
+        button.opt:hover:not([disabled]) { background: var(--purp-light); transform: translateY(-2px); }
+        
+        button.correct { background: var(--green) !important; color: white !important; border-color: var(--green); }
+        button.wrong { background: var(--red) !important; color: white !important; border-color: var(--red); }
+
+        .feedback { margin: 20px 0; font-weight: bold; font-size: 20px; height: 30px; text-align: center; }
+
+        #nextBtn { 
+            display: none; width: 100%; padding: 15px; font-size: 18px; font-weight: bold;
+            background: var(--purp-dark); color: white; border: none; border-radius: 10px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        #nextBtn:hover { background: #310e5d; }
+
+        .footer { margin-top: 40px; text-align: right; width: 100%; max-width: 800px; font-weight: bold; color: var(--purp-dark); border-top: 2px solid var(--purp-light); padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header">
+        <h1>Analyse SWOT : Test de Diagnostic</h1>
+        <p>Identifiez la nature de chaque facteur stratégique</p>
+    </div>
+
+    <div class="quiz-container" id="quizArea">
+        <div class="progress" id="progressText">Question 1 sur 6</div>
+        <div class="question-box">
+            <div class="scenario" id="scenarioDisplay">Chargement du scénario...</div>
+            <div class="options">
+                <button class="opt" onclick="verify('Force')">FORCE</button>
+                <button class="opt" onclick="verify('Faiblesse')">FAIBLESSE</button>
+                <button class="opt" onclick="verify('Opportunité')">OPPORTUNITÉ</button>
+                <button class="opt" onclick="verify('Menace')">MENACE</button>
+            </div>
+            <div class="feedback" id="resultMsg"></div>
+        </div>
+        <button id="nextBtn" onclick="advance()">Passer à la suite</button>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Hassan First University</div>
+
+    <script>
+        const data = [
+            { txt: '"Une forte notoriété de la marque auprès des jeunes consommateurs."', target: 'Force' },
+            { txt: '"L\'arrivée de nouveaux concurrents proposant des prix 20% moins chers."', target: 'Menace' },
+            { txt: '"Une capacité de production limitée et des machines vieillissantes."', target: 'Faiblesse' },
+            { txt: '"Une nouvelle réglementation fiscale favorisant les investissements technologiques."', target: 'Opportunité' },
+            { txt: '"Un taux de rotation (turnover) élevé du personnel qualifié."', target: 'Faiblesse' },
+            { txt: '"Le développement du e-commerce qui permet de toucher de nouveaux marchés."', target: 'Opportunité' }
+        ];
+
+        let idx = 0;
+
+        function show() {
+            document.getElementById('progressText').innerText = `Situation ${idx + 1} sur ${data.length}`;
+            document.getElementById('scenarioDisplay').innerText = data[idx].txt;
+            document.getElementById('resultMsg').innerText = "";
+            document.getElementById('nextBtn').style.display = "none";
+            let bts = document.querySelectorAll('.options button');
+            bts.forEach(b => { b.className = "opt"; b.disabled = false; });
+        }
+
+        function verify(pick) {
+            let correct = data[idx].target;
+            let bts = document.querySelectorAll('.options button');
+            
+            bts.forEach(b => {
+                b.disabled = true;
+                if(b.innerText === correct.toUpperCase()) b.classList.add('correct');
+                if(b.innerText === pick.toUpperCase() && pick !== correct) b.classList.add('wrong');
+            });
+
+            const msg = document.getElementById('resultMsg');
+            if(pick === correct) {
+                msg.innerText = "✅ Excellent diagnostic !";
+                msg.style.color = "var(--green)";
+            } else {
+                msg.innerText = "❌ Erreur de classification.";
+                msg.style.color = "var(--red)";
+            }
+            document.getElementById('nextBtn').style.display = "block";
+        }
+
+        function advance() {
+            idx++;
+            if(idx < data.length) {
+                show();
+            } else {
+                document.getElementById('quizArea').innerHTML = `
+                    <div style='text-align:center; padding:20px;'>
+                        <h2 style='color:var(--purp-dark)'>Révision Terminée !</h2>
+                        <p style='font-size:18px;'>Vous maîtrisez maintenant les bases de la matrice SWOT.</p>
+                        <button class="opt" style="width:100%; margin-top:20px;" onclick="location.reload()">Recommencer l'exercice</button>
+                    </div>`;
+            }
+        }
+
+        show();
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>SMART Strategy Simulator - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { --purp: #6a1b9a; --purp-l: #f3e5f5; --correct: #27ae60; --wrong: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { background: var(--purp); color: white; width: 100%; max-width: 850px; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 10px; }
+        .progress-container { width: 100%; max-width: 850px; background: #ddd; height: 10px; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: var(--purp); transition: 0.5s; }
+
+        .smart-container { background: white; width: 100%; max-width: 850px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; }
+        
+        .mission-box { background: var(--purp-l); border-left: 5px solid var(--purp); padding: 15px; margin-bottom: 25px; }
+
+        .choice-zone { display: flex; flex-direction: column; gap: 12px; }
+        .choice-btn { background: white; border: 2px solid #ddd; padding: 15px; border-radius: 10px; cursor: pointer; text-align: left; font-size: 15px; transition: 0.2s; position: relative; overflow: hidden; }
+        .choice-btn:hover:not(:disabled) { border-color: var(--purp); background: #f9f8ff; }
+        
+        .choice-btn.success { border-color: var(--correct); background: #e8f5e9; color: var(--correct); font-weight: bold; }
+        .choice-btn.error { border-color: var(--wrong); background: #ffebee; color: var(--wrong); }
+
+        #feedback-msg { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: center; font-weight: bold; animation: pop 0.3s; }
+        
+        @keyframes pop { 0% { transform: scale(0.9); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+        .footer { margin-top: 30px; font-weight: bold; color: var(--purp); border-top: 1px solid #ccc; padding-top: 10px; width: 100%; max-width: 850px; text-align: right; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header">
+        <h1>🎯 Vers des objectifs SMART</h1>
+        <p>Pr. Mouna HAJJAJ - Management Fondamental S2</p>
+    </div>
+
+    <div class="progress-container"><div id="progress-bar"></div></div>
+
+    <div class="smart-container">
+        <div class="mission-box">
+            <strong>Finalité Stratégique :</strong> "Améliorer la rentabilité de l'entreprise à long terme."
+        </div>
+
+        <div id="game-content">
+            <h3 id="step-title">Étape 1 : Spécifique (S)</h3>
+            <p style="font-size: 14px; color: #666;">On veut un résultat précis, pas une vague intention.</p>
+            <div class="choice-zone" id="choices"></div>
+        </div>
+
+        <div id="feedback-msg"></div>
+        
+        <button id="next-btn" style="display:none; margin-top: 20px; width: 100%; padding: 15px; background: var(--purp); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="loadStep()">Étape suivante ➔</button>
+    </div>
+
+    <div class="footer">Faculté d'Économie et de Gestion (FEG) - Settat</div>
+
+    <script>
+        const levels = [
+            {
+                t: "Étape 1 : Spécifique (S)",
+                o: [
+                    { txt: "Augmenter la performance de l'usine", correct: false, msg: "❌ Trop vague ! Quelle usine ? Quelle performance ?" },
+                    { txt: "Réduire les coûts de consommation d'énergie de l'usine de Settat", correct: true, msg: "✅ Bravo ! C'est spécifique à un lieu et un domaine." }
+                ]
+            },
+            {
+                t: "Étape 2 : Mesurable (M)",
+                o: [
+                    { txt: "Faire des économies importantes", correct: false, msg: "❌ 'Important' n'est pas un chiffre. On ne peut pas piloter sans mesure !" },
+                    { txt: "Réduire la facture d'électricité de 15%", correct: true, msg: "✅ Parfait ! 15% est un indicateur clé de succès." }
+                ]
+            },
+            {
+                t: "Étape 3 : Atteignable & Réaliste (A/R)",
+                o: [
+                    { txt: "Réduire de 15% en installant des panneaux solaires (Budget validé)", correct: true, msg: "✅ Oui ! On a les ressources nécessaires pour cet objectif." },
+                    { txt: "Réduire de 90% d'ici demain sans budget", correct: false, msg: "❌ Impossible. Un objectif doit rester raisonnable." }
+                ]
+            },
+            {
+                t: "Étape 4 : Temporellement défini (T)",
+                o: [
+                    { txt: "D'ici la fin de l'année budgétaire 2026", correct: true, msg: "✅ Très bien. Un objectif sans délai est juste un rêve !" },
+                    { txt: "Le plus vite possible", correct: false, msg: "❌ 'Vite' n'est pas une date précise." }
+                ]
+            }
+        ];
+
+        let current = 0;
+
+        function loadStep() {
+            if(current >= levels.length) return finish();
+            const step = levels[current];
+            document.getElementById('step-title').innerText = step.t;
+            document.getElementById('feedback-msg').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('progress-bar').style.width = (current / levels.length * 100) + "%";
+            
+            const container = document.getElementById('choices');
+            container.innerHTML = '';
+            
+            step.o.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerText = opt.txt;
+                btn.onclick = () => check(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function check(opt, btn) {
+            const feedback = document.getElementById('feedback-msg');
+            feedback.style.display = 'block';
+            feedback.innerText = opt.msg;
+            
+            if(opt.correct) {
+                btn.classList.add('success');
+                feedback.style.color = 'var(--correct)';
+                document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+                document.getElementById('next-btn').style.display = 'block';
+                current++;
+            } else {
+                btn.classList.add('error');
+                btn.style.animation = "shake 0.4s";
+                feedback.style.color = 'var(--wrong)';
+                setTimeout(() => btn.style.animation = "", 400);
+            }
+        }
+
+        function finish() {
+            document.getElementById('progress-bar').style.width = "100%";
+            document.getElementById('game-content').innerHTML = `
+                <div style="text-align:center; padding: 20px;">
+                    <h2 style="color:var(--correct)">🏆 Mission Accomplie !</h2>
+                    <p>L'objectif final est désormais <strong>SMART</strong> :</p>
+                    <div style="background:#f9f9f9; padding:15px; border-radius:10px; border: 2px solid var(--purp);">
+                        "Réduire la facture d'électricité de l'usine de Settat de 15% d'ici fin 2026 grâce au solaire."
+                    </div>
+                </div>
+            `;
+        }
+
+        loadStep();
+    </script>
+</body>
+</html>

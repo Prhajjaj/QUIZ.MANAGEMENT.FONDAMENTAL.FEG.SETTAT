@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnostic Multidimensionnel - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { --purp: #6a1b9a; --gold: #ffd700; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header { background: var(--purp); color: white; padding: 15px 30px; border-radius: 50px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        
+        .scenario-card { background: white; padding: 25px; border-radius: 15px; max-width: 800px; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-left: 10px solid var(--purp); margin-bottom: 30px; }
+        
+        .dimensions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 800px; }
+        
+        .dim-btn { background: white; border: 2px solid var(--purp); border-radius: 12px; padding: 20px 10px; cursor: pointer; transition: 0.3s; text-align: center; font-weight: bold; color: var(--purp); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .dim-btn:hover { background: var(--purp); color: white; transform: translateY(-5px); }
+        .dim-btn.active { background: var(--purp); color: white; box-shadow: 0 0 15px var(--purp); }
+        .dim-btn i { font-size: 24px; }
+
+        #analysis-box { margin-top: 30px; width: 100%; max-width: 800px; background: #e1bee7; padding: 20px; border-radius: 12px; display: none; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .footer { margin-top: 50px; font-style: italic; color: #777; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header">
+        <h2> L'Entreprise Multidimensionnelle</h2>
+    </div>
+
+    <div class="scenario-card">
+        <h3>Étude de cas : Le virage numérique d'une PME à Settat</h3>
+        <p>Une entreprise industrielle décide d'installer des logiciels de gestion (ERP) pour automatiser sa production, ce qui nécessite de former les ouvriers et de renégocier les contrats avec les fournisseurs de Cloud.</p>
+        <p><strong>Question :</strong> Quelles dimensions du phénomène "Entreprise" sont activées ici ? (Cliquez pour analyser)</p>
+    </div>
+
+    <div class="dimensions-grid">
+        <button class="dim-btn" onclick="toggleDim('tech', this)">⚙️ <br>Dimension Technique</button>
+        <button class="dim-btn" onclick="toggleDim('hum', this)">👥 <br>Dimension Humaine</button>
+        <button class="dim-btn" onclick="toggleDim('eco', this)">💰 <br>Dimension Économique</button>
+        <button class="dim-btn" onclick="toggleDim('jur', this)">⚖️ <br>Dimension Juridique</button>
+        <button class="dim-btn" onclick="toggleDim('soc', this)">🌍 <br>Dimension Sociétale</button>
+    </div>
+
+    <div id="analysis-box">
+        <h4 id="analysis-title">Analyse du Diagnostic :</h4>
+        <p id="analysis-text"></p>
+    </div>
+
+    <div class="footer"> Management S2 - Pr. Mouna HAJJAJ</div>
+
+    <script>
+        const analysisData = {
+            tech: "L'installation des logiciels et l'automatisation concernent les moyens de production et le savoir-faire.",
+            hum: "La formation des ouvriers et la gestion de leur adaptation au nouvel outil sont au cœur de cette dimension.",
+            eco: "L'investissement dans le logiciel vise à optimiser la production pour réaliser des profits.",
+            jur: "La renégociation des contrats avec les fournisseurs de Cloud relève des règles de droit et des engagements contractuels.",
+            soc: "L'impact sur l'emploi local ou l'image de modernité de l'entreprise dans sa région."
+        };
+
+        function toggleDim(dim, el) {
+            el.classList.toggle('active');
+            const box = document.getElementById('analysis-box');
+            box.style.display = 'block';
+            document.getElementById('analysis-text').innerText = analysisData[dim];
+        }
+    </script>
+</body>
+</html>

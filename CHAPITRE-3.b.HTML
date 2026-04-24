@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Classification Économique - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root { 
+            --purp-dark: #4a148c; 
+            --purp-med: #7b1fa2;
+            --purp-light: #f3e5f5; 
+            --gold: #ffc107;
+            --white: #ffffff;
+            --correct: #2e7d32;
+            --wrong: #c62828;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .header-simple { 
+            width: 100%; max-width: 900px; background: linear-gradient(to right, var(--purp-med), var(--purp-dark)); 
+            color: white; padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 25px; border-bottom: 5px solid var(--gold); 
+        }
+        .header-simple h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-simple p { margin: 10px 0 0; opacity: 0.9; font-size: 18px; }
+
+        .quiz-card { background: white; width: 100%; max-width: 850px; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid var(--purp-light); }
+        
+        .instruction { font-size: 18px; font-weight: 600; color: var(--purp-dark); margin-bottom: 20px; text-align: center; }
+        
+        .item-box { 
+            background: #fcfaff; padding: 30px; border-radius: 12px; text-align: center; 
+            font-size: 26px; font-weight: bold; color: var(--purp-med); border: 3px solid var(--purp-light); margin-bottom: 30px; 
+        }
+
+        .drop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .btn-zone { 
+            background: var(--white); border: 2.5px solid var(--purp-med); padding: 22px; border-radius: 12px; 
+            text-align: center; cursor: pointer; transition: 0.2s; font-weight: 800; font-size: 17px; color: var(--purp-dark);
+        }
+        .btn-zone:hover { background: var(--purp-light); transform: translateY(-2px); }
+        
+        .feedback { margin-top: 25px; height: 35px; text-align: center; font-size: 22px; font-weight: bold; }
+        
+        #nextBtn { 
+            display: none; width: 100%; margin-top: 15px; padding: 18px; background: var(--purp-dark); 
+            color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .footer { margin-top: 40px; text-align: right; width: 100%; max-width: 900px; font-weight: bold; color: var(--purp-dark); border-top: 2px solid var(--purp-light); padding-top: 15px; }
+        
+        @media (max-width: 600px) { .drop-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header-simple">
+        <h1>Classification des entreprises</h1>
+        <p>Critère économique : Secteurs d'activité</p>
+    </div>
+
+    <div class="quiz-card" id="mainQuiz">
+        <div class="instruction">À quel secteur appartient cette entité ?</div>
+        <div class="item-box" id="currentItem">Chargement...</div>
+        
+        <div class="drop-grid">
+            <div class="btn-zone" onclick="check('Primaire')">SECTEUR PRIMAIRE<br><small>(Ressources Naturelles)</small></div>
+            <div class="btn-zone" onclick="check('Secondaire')">SECTEUR SECONDAIRE<br><small>(Industrie / Transformation)</small></div>
+            <div class="btn-zone" onclick="check('Tertiaire')">SECTEUR TERTIAIRE<br><small>(Services de base)</small></div>
+            <div class="btn-zone" onclick="check('Quaternaire')">SECTEUR QUATERNAIRE<br><small>(Recherche / Haute Technologie)</small></div>
+        </div>
+
+        <div class="feedback" id="feedbackArea"></div>
+        <button id="nextBtn" onclick="next()">Question Suivante</button>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
+
+    <script>
+        const scenarios = [
+            { q: "Une exploitation agricole (Céréales)", a: "Primaire" },
+            { q: "Une usine de montage automobile", a: "Secondaire" },
+            { q: "Un laboratoire de Recherche & Développement (R&D)", a: "Quaternaire" },
+            { q: "Une compagnie de transport de marchandises", a: "Tertiaire" },
+            { q: "Un centre de production de logiciels informatiques", a: "Quaternaire" },
+            { q: "Une coopérative d'élevage laitier", a: "Primaire" },
+            { q: "Une banque commerciale (Services financiers)", a: "Tertiaire" }
+        ];
+
+        let i = 0;
+
+        function next() {
+            if(i >= scenarios.length) {
+                document.getElementById('mainQuiz').innerHTML = `
+                    <div style="text-align:center; padding:30px;">
+                        <h2 style="color:var(--purp-dark)">Test terminé avec succès !</h2>
+                        <p style="font-size:18px;">L'étudiant a validé ses connaissances sur les secteurs.</p>
+                        <button onclick="location.reload()" style="padding:15px 40px; background:var(--purp-med); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">Recommencer</button>
+                    </div>`;
+                return;
+            }
+            document.getElementById('currentItem').innerText = scenarios[i].q;
+            document.getElementById('feedbackArea').innerText = "";
+            document.getElementById('nextBtn').style.display = "none";
+            document.querySelectorAll('.btn-zone').forEach(b => { b.style.pointerEvents = "auto"; b.style.opacity = "1"; });
+        }
+
+        function check(userPick) {
+            const correct = scenarios[i].a;
+            const res = document.getElementById('feedbackArea');
+            
+            if(userPick === correct) {
+                res.innerText = "✅ CORRECT";
+                res.style.color = "var(--correct)";
+                i++;
+                document.getElementById('nextBtn').style.display = "block";
+                document.querySelectorAll('.btn-zone').forEach(b => b.style.pointerEvents = "none");
+            } else {
+                res.innerText = "❌ ERREUR - Essayez encore";
+                res.style.color = "var(--wrong)";
+            }
+        }
+
+        next();
+    </script>
+</body>
+</html>

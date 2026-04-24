@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Structures Organisationnelles - Pr. Mouna HAJJAJ</title>
+    <style>
+        :root {
+            --primary: #4a148c;
+            --secondary: #7b1fa2;
+            --accent: #ffc107;
+            --bg: #fdfdfd;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        
+        .header-mini { 
+            width: 95%; max-width: 1100px; background: var(--primary); color: white; 
+            padding: 10px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--accent); margin-bottom: 15px;
+        }
+        .header-mini h1 { margin: 0; font-size: 18px; }
+
+        .instruction { font-size: 14px; color: #444; margin-bottom: 15px; font-weight: bold; }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            width: 98%;
+            max-width: 1200px;
+        }
+
+        /* Liste des étiquettes */
+        .pool {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px dashed var(--secondary);
+            min-height: 600px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--secondary);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: grab;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Grille des structures */
+        .grid-targets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .drop-zone {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            min-height: 150px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .drop-zone.hover { border-color: var(--accent); background: #fffde7; }
+        
+        .title {
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            border: 1px solid #c8e6c9;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 20px;">
+    <a href="INDEX.HTML" style="
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        background-color: #6a1b9a; /* Violet identique à votre index */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
+    </a>
+</div>
+    <div class="header-mini">
+        <h1>Analyse Comparée des Structures</h1>
+    </div>
+
+    <div class="instruction">Faites glisser chaque caractéristique vers la structure correspondante :</div>
+
+    <div class="game-container">
+        <div class="pool" id="pool">
+            <div class="card" draggable="true" id="c1" data-cat="hier">Unité de commandement stricte (Fayol)</div>
+            <div class="card" draggable="true" id="c2" data-cat="fonc">Pluralité de commandement (Taylor)</div>
+            <div class="card" draggable="true" id="c3" data-cat="staff">Dualité : Décision (Line) et Conseil (Staff)</div>
+            <div class="card" draggable="true" id="c4" data-cat="divi">Découpage par produits ou zones géographiques</div>
+            <div class="card" draggable="true" id="c5" data-cat="matr">Double subordination : Chef de projet / Chef de métier</div>
+            <div class="card" draggable="true" id="c6" data-cat="hier">Risque de sclérose et lourdeur si l'entreprise grandit</div>
+            <div class="card" draggable="true" id="c7" data-cat="fonc">Spécialisation très poussée des tâches</div>
+            <div class="card" draggable="true" id="c8" data-cat="divi">Chaque division est un centre de profit autonome</div>
+            <div class="card" draggable="true" id="c9" data-cat="matr">Idéal pour les entreprises travaillant par projets complexes</div>
+            <div class="card" draggable="true" id="c10" data-cat="staff">Présence d'un état-major pour aider la direction</div>
+        </div>
+
+        <div class="grid-targets">
+            <div class="drop-zone" id="hier" ondrop="drop(event)" ondragover="allow(event)">
+                <div class="title">Structure Hiérarchique</div>
+            </div>
+            <div class="drop-zone" id="fonc" ondrop="drop(event)" ondragover="allow(event)">
+                <div class="title">Structure Fonctionnelle</div>
+            </div>
+            <div class="drop-zone" id="staff" ondrop="drop(event)" ondragover="allow(event)">
+                <div class="title">Structure Staff & Line</div>
+            </div>
+            <div class="drop-zone" id="divi" ondrop="drop(event)" ondragover="allow(event)">
+                <div class="title">Structure Divisionnelle</div>
+            </div>
+            <div class="drop-zone" id="matr" ondrop="drop(event)" ondragover="allow(event)">
+                <div class="title">Structure Matricielle</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">Pr. Mouna HAJJAJ - Hassan First University</div>
+
+    <script>
+        function allow(ev) { ev.preventDefault(); ev.currentTarget.classList.add('hover'); }
+        
+        document.querySelectorAll('.drop-zone').forEach(z => {
+            z.addEventListener('dragleave', e => e.currentTarget.classList.remove('hover'));
+        });
+
+        document.querySelectorAll('.card').forEach(d => {
+            d.addEventListener('dragstart', e => e.dataTransfer.setData("text", e.target.id));
+        });
+
+        function drop(ev) {
+            ev.preventDefault();
+            const zone = ev.currentTarget;
+            zone.classList.remove('hover');
+            const id = ev.dataTransfer.getData("text");
+            const el = document.getElementById(id);
+            
+            if (zone.id === el.getAttribute('data-cat')) {
+                const tag = document.createElement('div');
+                tag.className = 'placed';
+                tag.innerText = el.innerText;
+                zone.appendChild(tag);
+                el.style.display = 'none';
+            } else {
+                alert("Attention, cette caractéristique appartient à une autre structure !");
+            }
+        }
+    </script>
+</body>
+</html>
