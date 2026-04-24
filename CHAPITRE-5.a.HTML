@@ -18,23 +18,26 @@
         }
         .header-mini h1 { margin: 0; font-size: 18px; }
 
-        .instruction { font-size: 14px; color: #444; margin-bottom: 15px; font-weight: bold; }
+        .instruction { font-size: 14px; color: #444; margin-bottom: 15px; font-weight: bold; text-align: center;}
 
         .game-container {
             display: grid;
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 1fr; /* Adapté mobile par défaut */
             gap: 20px;
             width: 98%;
             max-width: 1200px;
         }
 
-        /* Liste des étiquettes */
+        @media (min-width: 768px) {
+            .game-container { grid-template-columns: 320px 1fr; }
+        }
+
         .pool {
             background: #f3e5f5;
             padding: 15px;
             border-radius: 10px;
             border: 2px dashed var(--secondary);
-            min-height: 600px;
+            min-height: 200px;
         }
 
         .card {
@@ -43,13 +46,18 @@
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 6px;
-            cursor: grab;
+            cursor: pointer;
             font-size: 13px;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            touch-action: none; /* Empêche le scroll pendant le drag */
         }
 
-        /* Grille des structures */
+        .card.selected {
+            background: var(--accent);
+            border-color: #ffa000;
+        }
+
         .grid-targets {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -60,11 +68,12 @@
             background: white;
             border: 2px solid #ddd;
             border-radius: 10px;
-            min-height: 150px;
+            min-height: 120px;
             padding: 10px;
             display: flex;
             flex-direction: column;
             transition: 0.3s;
+            cursor: pointer;
         }
 
         .drop-zone.hover { border-color: var(--accent); background: #fffde7; }
@@ -82,6 +91,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            pointer-events: none;
         }
 
         .placed {
@@ -93,35 +103,44 @@
             border: 1px solid #c8e6c9;
             margin-bottom: 5px;
             text-align: center;
+            animation: pop 0.3s ease;
         }
 
-        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; }
+        @keyframes pop {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1); }
+        }
+
+        .footer { margin-top: 20px; font-weight: bold; color: var(--primary); font-size: 12px; text-align: center; }
+
+        .btn-retour {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            background-color: #6a1b9a;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-<div style="margin-bottom: 20px;">
-    <a href="INDEX.HTML" style="
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        background-color: #6a1b9a; /* Violet identique à votre index */
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 0.9em;
-        font-weight: bold;
-        transition: 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    ">
+
+    <a href="INDEX.HTML" class="btn-retour">
         <span style="margin-right: 8px;">🏠</span> Retour à la liste des Quiz
     </a>
-</div>
+
     <div class="header-mini">
         <h1>Analyse Comparée des Structures</h1>
     </div>
 
-    <div class="instruction">Faites glisser chaque caractéristique vers la structure correspondante :</div>
+    <div class="instruction">Mobile : Cliquez sur une carte puis sur sa zone.<br>PC : Glissez-déposez les éléments.</div>
 
     <div class="game-container">
         <div class="pool" id="pool">
@@ -138,50 +157,74 @@
         </div>
 
         <div class="grid-targets">
-            <div class="drop-zone" id="hier" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="hier" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Structure Hiérarchique</div>
             </div>
-            <div class="drop-zone" id="fonc" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="fonc" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Structure Fonctionnelle</div>
             </div>
-            <div class="drop-zone" id="staff" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="staff" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Structure Staff & Line</div>
             </div>
-            <div class="drop-zone" id="divi" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="divi" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Structure Divisionnelle</div>
             </div>
-            <div class="drop-zone" id="matr" ondrop="drop(event)" ondragover="allow(event)">
+            <div class="drop-zone" id="matr" ondrop="handleDrop(event)" ondragover="allow(event)" onclick="handleZoneClick(this)">
                 <div class="title">Structure Matricielle</div>
             </div>
         </div>
     </div>
 
-    <div class="footer">Pr. Mouna HAJJAJ - Hassan First University</div>
+    <div class="footer">Pr. Mouna HAJJAJ - Management Fondamental S2</div>
 
     <script>
+        let selectedCard = null;
+
+        // --- GESTION PC (DRAG & DROP) ---
         function allow(ev) { ev.preventDefault(); ev.currentTarget.classList.add('hover'); }
         
         document.querySelectorAll('.drop-zone').forEach(z => {
             z.addEventListener('dragleave', e => e.currentTarget.classList.remove('hover'));
         });
 
-        document.querySelectorAll('.card').forEach(d => {
-            d.addEventListener('dragstart', e => e.dataTransfer.setData("text", e.target.id));
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('dragstart', e => {
+                e.dataTransfer.setData("text", e.target.id);
+            });
+            // --- GESTION MOBILE (CLICK) ---
+            card.addEventListener('click', e => {
+                if(selectedCard) selectedCard.classList.remove('selected');
+                selectedCard = card;
+                card.classList.add('selected');
+                e.stopPropagation();
+            });
         });
 
-        function drop(ev) {
+        function handleDrop(ev) {
             ev.preventDefault();
             const zone = ev.currentTarget;
             zone.classList.remove('hover');
             const id = ev.dataTransfer.getData("text");
-            const el = document.getElementById(id);
-            
-            if (zone.id === el.getAttribute('data-cat')) {
+            validateAndPlace(document.getElementById(id), zone);
+        }
+
+        // --- GESTION MOBILE (VALIDATION AU CLIC) ---
+        function handleZoneClick(zone) {
+            if (selectedCard) {
+                validateAndPlace(selectedCard, zone);
+                selectedCard.classList.remove('selected');
+                selectedCard = null;
+            }
+        }
+
+        function validateAndPlace(card, zone) {
+            if (!card) return;
+            if (zone.id === card.getAttribute('data-cat')) {
                 const tag = document.createElement('div');
                 tag.className = 'placed';
-                tag.innerText = el.innerText;
+                tag.innerText = card.innerText;
                 zone.appendChild(tag);
-                el.style.display = 'none';
+                card.style.display = 'none';
             } else {
                 alert("Attention, cette caractéristique appartient à une autre structure !");
             }
